@@ -223,13 +223,13 @@
 
         .export-btn,
         .btn-success {
-            background: #059669;
+            background: #1468c7;
             color: #fff
         }
 
         .export-btn:hover,
         .btn-success:hover {
-            background: #047857
+            background: #1468c7
         }
 
         .btn-secondary {
@@ -1452,20 +1452,20 @@
         const READ_URL = API_BASE + "/usloob/read";
         const SAVE_URL = API_BASE + "/usloob/save";
 
-        const DEFAULT_DB = { auth: { username: "admin", password: "password" }, theme: "#050505", students: [], courses: [], payments: [], history: [] };
+        const DEFAULT_DB = {auth: {username: "admin", password: "password"}, theme: "#050505", students: [], courses: [], payments: [], history: []};
         let database = structuredClone(DEFAULT_DB);
         let loadingDepth = 0;
         let voucherStudentIndex = -1;
 
         const $ = id => document.getElementById(id);
         const money = n => "Rs. " + (Number(n) || 0).toLocaleString("en-PK");
-        const today = () => { const d = new Date(); const z = n => String(n).padStart(2, "0"); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}` };
+        const today = () => {const d = new Date(); const z = n => String(n).padStart(2, "0"); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}`};
         const uid = p => p + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-        const safe = v => String(v ?? "").replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const safe = v => String(v ?? "").replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 
         function normalizeDatabase() {
             database && typeof database === "object" || (database = structuredClone(DEFAULT_DB));
-            database.auth = database.auth || { username: "admin", password: "usloob" };
+            database.auth = database.auth || {username: "admin", password: "usloob"};
             database.theme = "#050505";
             database.students = Array.isArray(database.students) ? database.students : [];
             database.courses = Array.isArray(database.courses) ? database.courses : [];
@@ -1481,13 +1481,13 @@
                 database.history.forEach(h => {
                     const student = database.students.find(s => String(s.id) === String(h.studentId) || (s.name === h.name && s.date === h.date));
                     const amount = Number(h.amount ?? h.received ?? h.receive ?? h.receiving) || 0;
-                    if (student && amount > 0) database.payments.push({ id: uid("pay"), studentId: student.id, date: h.date || student.date, amount, method: h.method || "Cash", receipt: h.receipt || student.receipt || "", note: h.note || "Migrated from previous payment history" });
+                    if (student && amount > 0) database.payments.push({id: uid("pay"), studentId: student.id, date: h.date || student.date, amount, method: h.method || "Cash", receipt: h.receipt || student.receipt || "", note: h.note || "Migrated from previous payment history"});
                 });
             }
             database.students.forEach(s => {
                 const ps = database.payments.filter(p => String(p.studentId) === String(s.id));
                 const total = ps.reduce((a, p) => a + (Number(p.amount) || 0), 0);
-                if (!ps.length && s.received > 0) database.payments.push({ id: uid("pay"), studentId: s.id, date: s.date, amount: s.received, method: "Cash", receipt: s.receipt, note: "Opening balance migrated from student record" });
+                if (!ps.length && s.received > 0) database.payments.push({id: uid("pay"), studentId: s.id, date: s.date, amount: s.received, method: "Cash", receipt: s.receipt, note: "Opening balance migrated from student record"});
             });
             database.payments = database.payments.filter(p => {
                 p.id = String(p.id || uid("pay")); p.studentId = String(p.studentId || ""); p.date = p.date || today(); p.amount = Number(p.amount) || 0; p.method = p.method || "Cash"; p.receipt = String(p.receipt || ""); p.note = String(p.note || ""); return p.amount > 0 && p.studentId;
@@ -1495,11 +1495,11 @@
             database.students.forEach(s => s.received = studentReceived(s.id));
             database.history = database.payments;
             database.courses = [...new Set(database.courses.map(String).filter(Boolean))];
-            database.students.forEach(s => { if (s.course && !database.courses.some(c => c.toLowerCase() === s.course.toLowerCase())) database.courses.unshift(s.course) });
+            database.students.forEach(s => {if (s.course && !database.courses.some(c => c.toLowerCase() === s.course.toLowerCase())) database.courses.unshift(s.course)});
         }
 
         async function readOnlineDatabase() {
-            const response = await fetch(READ_URL, { method: "GET", cache: "no-store", headers: { "Accept": "application/json" } });
+            const response = await fetch(READ_URL, {method: "GET", cache: "no-store", headers: {"Accept": "application/json"}});
             if (!response.ok) throw new Error(`Server returned HTTP ${response.status}.`);
             const result = await response.json();
             if (!result || result.status !== true || !result.data || typeof result.data !== "object") throw new Error("The server returned an invalid USLOOB database.");
@@ -1507,7 +1507,7 @@
         }
         async function saveOnlineDatabase() {
             normalizeDatabase();
-            const response = await fetch(SAVE_URL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(database) });
+            const response = await fetch(SAVE_URL, {method: "POST", headers: {"Content-Type": "application/json", "Accept": "application/json"}, body: JSON.stringify(database)});
             if (!response.ok) throw new Error(`Could not save database. Server returned HTTP ${response.status}.`);
             const result = await response.json();
             if (!result || result.status !== true) throw new Error(result?.message || "The online database rejected the save request.");
@@ -1515,79 +1515,79 @@
         }
         async function refreshFromServer(message = "Loading USLOOB online database...") {
             showLoading(message);
-            try { await readOnlineDatabase(); applyTheme(); refreshUI(); toast("Online database loaded."); }
-            catch (e) { console.error(e); alert("Could not load the USLOOB online database.\n\n" + e.message); }
-            finally { hideLoading(); }
+            try {await readOnlineDatabase(); applyTheme(); refreshUI(); toast("Online database loaded.");}
+            catch (e) {console.error(e); alert("Could not load the USLOOB online database.\n\n" + e.message);}
+            finally {hideLoading();}
         }
         async function commit(message, successMessage, after) {
             showLoading(message);
-            try { normalizeDatabase(); await saveOnlineDatabase(); refreshUI(); if (typeof after === "function") after(); toast(successMessage); }
-            catch (e) { console.error(e); alert("Online save failed.\n\n" + e.message); throw e }
-            finally { hideLoading(); }
+            try {normalizeDatabase(); await saveOnlineDatabase(); refreshUI(); if (typeof after === "function") after(); toast(successMessage);}
+            catch (e) {console.error(e); alert("Online save failed.\n\n" + e.message); throw e}
+            finally {hideLoading();}
         }
 
-        function applyTheme() { document.documentElement.style.setProperty("--primary", "#050505"); document.documentElement.style.setProperty("--primary-hover", "#222") }
-        function startClock() { const tick = () => { $("liveClock").textContent = new Date().toLocaleString("en-PK", { weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" }) }; tick(); setInterval(tick, 1000) }
-        function toast(message) { const t = $("toast"); t.textContent = message; t.style.display = "block"; clearTimeout(window.__toast); window.__toast = setTimeout(() => t.style.display = "none", 2800) }
-        function showLoading(message = "Processing...") { loadingDepth++; $("loadingMessage").textContent = message; $("loadingOverlay").classList.add("active") }
-        function hideLoading() { loadingDepth = Math.max(0, loadingDepth - 1); if (!loadingDepth) $("loadingOverlay").classList.remove("active") }
+        function applyTheme() {document.documentElement.style.setProperty("--primary", "#050505"); document.documentElement.style.setProperty("--primary-hover", "#222")}
+        function startClock() {const tick = () => {$("liveClock").textContent = new Date().toLocaleString("en-PK", {weekday: "short", year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"})}; tick(); setInterval(tick, 1000)}
+        function toast(message) {const t = $("toast"); t.textContent = message; t.style.display = "block"; clearTimeout(window.__toast); window.__toast = setTimeout(() => t.style.display = "none", 2800)}
+        function showLoading(message = "Processing...") {loadingDepth++; $("loadingMessage").textContent = message; $("loadingOverlay").classList.add("active")}
+        function hideLoading() {loadingDepth = Math.max(0, loadingDepth - 1); if (!loadingDepth) $("loadingOverlay").classList.remove("active")}
 
-        function showPage(id) { document.querySelectorAll(".page").forEach(p => p.style.display = p.id === id ? "flex" : "none"); document.querySelectorAll(".side-nav button[data-page]").forEach(b => b.classList.toggle("active", b.dataset.page === id)); closeSidebar(); if (id === "coursesPage") renderCourses() }
-        function openSidebar() { $("sidebarWindow").classList.add("active") } function closeSidebar() { $("sidebarWindow").classList.remove("active") }
+        function showPage(id) {document.querySelectorAll(".page").forEach(p => p.style.display = p.id === id ? "flex" : "none"); document.querySelectorAll(".side-nav button[data-page]").forEach(b => b.classList.toggle("active", b.dataset.page === id)); closeSidebar(); if (id === "coursesPage") renderCourses()}
+        function openSidebar() {$("sidebarWindow").classList.add("active")} function closeSidebar() {$("sidebarWindow").classList.remove("active")}
 
-        function studentReceived(id) { return database.payments.filter(p => String(p.studentId) === String(id)).reduce((a, p) => a + (Number(p.amount) || 0), 0) }
-        function getBalance(s) { const r = studentReceived(s.id); s.received = r; return Math.max(0, (Number(s.fee) || 0) - r) }
+        function studentReceived(id) {return database.payments.filter(p => String(p.studentId) === String(id)).reduce((a, p) => a + (Number(p.amount) || 0), 0)}
+        function getBalance(s) {const r = studentReceived(s.id); s.received = r; return Math.max(0, (Number(s.fee) || 0) - r)}
         function updateCards() {
             let total = 0, received = 0, balance = 0;
-            database.students.forEach(s => { total += Number(s.fee) || 0; received += studentReceived(s.id); balance += getBalance(s) });
+            database.students.forEach(s => {total += Number(s.fee) || 0; received += studentReceived(s.id); balance += getBalance(s)});
             $("cardTotalStudents").textContent = database.students.length; $("cardActiveStudents").textContent = database.students.filter(s => s.status === "active").length;
             $("cardCertifiedStudents").textContent = database.students.filter(s => s.status === "certified").length; $("cardRevenue").textContent = money(total);
             $("cardReceived").textContent = money(received); $("cardBalance").textContent = money(balance); $("cardCourses").textContent = database.courses.length;
         }
-        function updateCourseDatalist() { $("scourse-list").innerHTML = database.courses.map(c => `<option value="${safe(c)}"></option>`).join("") }
+        function updateCourseDatalist() {$("scourse-list").innerHTML = database.courses.map(c => `<option value="${safe(c)}"></option>`).join("")}
         function renderStudents() {
             const q = $("searchInput").value.toLowerCase().trim(), f = $("statusFilter").value;
-            const list = database.students.filter(s => { const bal = getBalance(s); const ok = f === "total" || (f === "balance" && bal > 0) || (f === "clear" && bal <= 0) || s.status === f; return ok && [s.name, s.fatherName, s.course, s.phone].join(" ").toLowerCase().includes(q) });
+            const list = database.students.filter(s => {const bal = getBalance(s); const ok = f === "total" || (f === "balance" && bal > 0) || (f === "clear" && bal <= 0) || s.status === f; return ok && [s.name, s.fatherName, s.course, s.phone].join(" ").toLowerCase().includes(q)});
             const body = $("studentTableBody");
-            if (!list.length) { body.innerHTML = '<tr><td colspan="10" class="empty">No student records found.</td></tr>'; return }
+            if (!list.length) {body.innerHTML = '<tr><td colspan="10" class="empty">No student records found.</td></tr>'; return }
             body.innerHTML = list.map(s => {
                 const i = database.students.indexOf(s), bal = getBalance(s);
                 return `<tr><td><strong>${safe(s.name)}</strong></td><td>${safe(s.fatherName)}</td><td>${safe(s.course)}</td><td>${safe(s.phone)}</td><td>${money(s.fee)}</td><td>${money(s.received)}</td><td style="font-weight:800;color:${bal > 0 ? "var(--danger)" : "var(--success)"}">${money(bal)}</td><td><span class="status-badge status-${safe(s.status)}">${safe(s.status)}</span></td><td>${safe(s.date)}</td><td><div class="action-cell"><button class="action-icon-btn" title="Edit" onclick="openStudentModal(${i})">✏️</button><button class="action-icon-btn" title="Add Payment" onclick="openPaymentModal('${safe(s.id)}')">💵</button><button class="action-icon-btn" title="Fee Voucher" onclick="exportFeeVoucher(${i})">🧾</button><button class="action-icon-btn" title="Delete" onclick="deleteStudent(${i})">🗑️</button></div></td></tr>`;
             }).join("");
         }
 
-        function calculateBalance() { const fee = Number($("sfee").value) || 0, rec = Number($("sreceived").value) || 0; $("sbalance").value = money(Math.max(0, fee - rec)) }
+        function calculateBalance() {const fee = Number($("sfee").value) || 0, rec = Number($("sreceived").value) || 0; $("sbalance").value = money(Math.max(0, fee - rec))}
         function openStudentModal(index = -1) {
             $("studentIndex").value = index; $("studentForm").reset();
-            if (index < 0) { $("modalTitle").textContent = "Add New Student"; $("sdate").value = today(); $("sstatus").value = "active"; $("sreceived").value = 0 }
-            else { const s = database.students[index]; if (!s) return; $("modalTitle").textContent = "Edit Student Record"; $("sname").value = s.name; $("sfather").value = s.fatherName; $("sphone").value = s.phone; $("scourse").value = s.course; $("sfee").value = s.fee; $("sreceived").value = s.received; $("sstatus").value = s.status; $("sdate").value = s.date; $("sreceipt").value = s.receipt || "" }
+            if (index < 0) {$("modalTitle").textContent = "Add New Student"; $("sdate").value = today(); $("sstatus").value = "active"; $("sreceived").value = 0}
+            else {const s = database.students[index]; if (!s) return; $("modalTitle").textContent = "Edit Student Record"; $("sname").value = s.name; $("sfather").value = s.fatherName; $("sphone").value = s.phone; $("scourse").value = s.course; $("sfee").value = s.fee; $("sreceived").value = s.received; $("sstatus").value = s.status; $("sdate").value = s.date; $("sreceipt").value = s.receipt || ""}
             calculateBalance(); $("studentModal").style.display = "flex"; setTimeout(() => $("sname").focus(), 50)
         }
-        function closeStudentModal() { $("studentModal").style.display = "none" }
+        function closeStudentModal() {$("studentModal").style.display = "none"}
 
         function addPaymentInternal(studentId, date, amount, method, receipt, note) {
             const value = Number(amount) || 0; if (value <= 0) return null;
-            const p = { id: uid("pay"), studentId: String(studentId), date: date || today(), amount: value, method: method || "Cash", receipt: receipt || "", note: note || "" };
+            const p = {id: uid("pay"), studentId: String(studentId), date: date || today(), amount: value, method: method || "Cash", receipt: receipt || "", note: note || ""};
             database.payments.unshift(p); database.history = database.payments; return p;
         }
         function reconcileStudentReceived(id, target, receipt = "") {
             const wanted = Math.max(0, Number(target) || 0), current = studentReceived(id);
             if (wanted === current) return;
-            if (wanted > current) { addPaymentInternal(id, today(), wanted - current, "Cash", receipt, "Additional payment recorded during student edit"); return }
+            if (wanted > current) {addPaymentInternal(id, today(), wanted - current, "Cash", receipt, "Additional payment recorded during student edit"); return }
             let reduce = current - wanted;
-            for (let i = database.payments.length - 1; i >= 0 && reduce > 0; i--) { const p = database.payments[i]; if (String(p.studentId) !== String(id)) continue; const a = Number(p.amount) || 0; if (a <= reduce) { reduce -= a; database.payments.splice(i, 1) } else { p.amount = a - reduce; reduce = 0 } }
+            for (let i = database.payments.length - 1; i >= 0 && reduce > 0; i--) {const p = database.payments[i]; if (String(p.studentId) !== String(id)) continue; const a = Number(p.amount) || 0; if (a <= reduce) {reduce -= a; database.payments.splice(i, 1)} else {p.amount = a - reduce; reduce = 0} }
         }
         async function saveStudent(e) {
             e.preventDefault();
             const idx = Number($("studentIndex").value), fee = Number($("sfee").value) || 0, received = Number($("sreceived").value) || 0;
-            if (received < 0 || received > fee) { alert("Received amount must be between 0 and the total fee."); return }
+            if (received < 0 || received > fee) {alert("Received amount must be between 0 and the total fee."); return }
             const old = idx >= 0 ? database.students[idx] : null;
-            const record = { id: old?.id || uid("stu"), name: $("sname").value.trim(), fatherName: $("sfather").value.trim(), phone: $("sphone").value.trim(), course: $("scourse").value.trim(), fee, received, status: $("sstatus").value, date: $("sdate").value || today(), receipt: $("sreceipt").value.trim() };
-            if (!record.name || !record.fatherName || !record.phone || !record.course) { alert("Please complete all required student fields."); return }
+            const record = {id: old?.id || uid("stu"), name: $("sname").value.trim(), fatherName: $("sfather").value.trim(), phone: $("sphone").value.trim(), course: $("scourse").value.trim(), fee, received, status: $("sstatus").value, date: $("sdate").value || today(), receipt: $("sreceipt").value.trim()};
+            if (!record.name || !record.fatherName || !record.phone || !record.course) {alert("Please complete all required student fields."); return }
             try {
                 if (!database.courses.some(c => c.toLowerCase() === record.course.toLowerCase())) database.courses.unshift(record.course);
-                if (idx < 0) { database.students.unshift(record); if (received > 0) addPaymentInternal(record.id, record.date, received, "Cash", record.receipt, "Initial enrollment payment") }
-                else { database.students[idx] = record; reconcileStudentReceived(record.id, received, record.receipt) }
+                if (idx < 0) {database.students.unshift(record); if (received > 0) addPaymentInternal(record.id, record.date, received, "Cash", record.receipt, "Initial enrollment payment")}
+                else {database.students[idx] = record; reconcileStudentReceived(record.id, received, record.receipt)}
                 database.students.forEach(s => s.received = studentReceived(s.id)); await commit(idx < 0 ? "Saving student online..." : "Updating student online...", idx < 0 ? "Student added successfully." : "Student updated successfully."); closeStudentModal();
             } catch (e) { }
         }
@@ -1595,140 +1595,140 @@
             const s = database.students[index]; if (!s) return;
             if (!confirm(`Delete ${s.name}'s record?\n\nPayment history will be retained.`)) return;
             database.students.splice(index, 1);
-            try { await commit("Deleting student online...", "Student deleted.") } catch (e) { }
+            try {await commit("Deleting student online...", "Student deleted.")} catch (e) { }
         }
 
-        function fillPaymentStudents(selected = "") { $("paymentStudent").innerHTML = database.students.length ? database.students.map(s => `<option value="${safe(s.id)}" ${String(s.id) === String(selected) ? "selected" : ""}>${safe(s.name)} — ${safe(s.course)} — Balance ${money(getBalance(s))}</option>`).join("") : '<option value="">No students available</option>' }
-        function openPaymentModal(studentId = "") { $("paymentForm").reset(); fillPaymentStudents(studentId); $("paymentDate").value = today(); $("paymentModal").style.display = "flex" }
-        function closePaymentModal() { $("paymentModal").style.display = "none" }
+        function fillPaymentStudents(selected = "") {$("paymentStudent").innerHTML = database.students.length ? database.students.map(s => `<option value="${safe(s.id)}" ${String(s.id) === String(selected) ? "selected" : ""}>${safe(s.name)} — ${safe(s.course)} — Balance ${money(getBalance(s))}</option>`).join("") : '<option value="">No students available</option>'}
+        function openPaymentModal(studentId = "") {$("paymentForm").reset(); fillPaymentStudents(studentId); $("paymentDate").value = today(); $("paymentModal").style.display = "flex"}
+        function closePaymentModal() {$("paymentModal").style.display = "none"}
         async function savePayment(e) {
             e.preventDefault(); const id = $("paymentStudent").value, s = database.students.find(x => String(x.id) === String(id)), amount = Number($("paymentAmount").value) || 0;
-            if (!s) { alert("Please select a student."); return } if (amount <= 0) { alert("Enter a valid payment amount."); return } if (amount > getBalance(s)) { alert("Payment cannot be greater than the student's outstanding balance."); return }
+            if (!s) {alert("Please select a student."); return } if (amount <= 0) {alert("Enter a valid payment amount."); return } if (amount > getBalance(s)) {alert("Payment cannot be greater than the student's outstanding balance."); return }
             addPaymentInternal(id, $("paymentDate").value || today(), amount, $("paymentMethod").value, $("paymentReceipt").value.trim(), $("paymentNote").value.trim());
-            try { await commit("Saving payment online...", "Payment saved successfully."); closePaymentModal(); if ($("historyModal").style.display === "flex") renderHistory() } catch (e) { }
+            try {await commit("Saving payment online...", "Payment saved successfully."); closePaymentModal(); if ($("historyModal").style.display === "flex") renderHistory()} catch (e) { }
         }
         async function deletePayment(id) {
             const p = database.payments.find(x => String(x.id) === String(id)); if (!p) return; if (!confirm("Delete this payment transaction? The student's received amount will be recalculated.")) return;
             database.payments = database.payments.filter(x => String(x.id) !== String(id)); database.history = database.payments; database.students.forEach(s => s.received = studentReceived(s.id));
-            try { await commit("Deleting payment online...", "Payment transaction deleted."); renderHistory() } catch (e) { }
+            try {await commit("Deleting payment online...", "Payment transaction deleted."); renderHistory()} catch (e) { }
         }
-        function paymentStudentName(p) { return database.students.find(s => String(s.id) === String(p.studentId))?.name || "Deleted Student" }
-        function paymentCourse(p) { return database.students.find(s => String(s.id) === String(p.studentId))?.course || "—" }
-        function openHistoryModal() { populateHistoryStudentFilter(); renderHistory(); $("historyModal").style.display = "flex" } function closeHistoryModal() { $("historyModal").style.display = "none" }
-        function populateHistoryStudentFilter() { const cur = $("historyStudentFilter").value; $("historyStudentFilter").innerHTML = '<option value="">All Students</option>' + database.students.map(s => `<option value="${safe(s.id)}">${safe(s.name)}</option>`).join(""); $("historyStudentFilter").value = cur }
-        function filteredPayments() { const q = $("historySearch").value.toLowerCase().trim(), date = $("historyDateFilter").value, student = $("historyStudentFilter").value; return database.payments.filter(p => { const text = [paymentStudentName(p), paymentCourse(p), p.method, p.receipt, p.note].join(" ").toLowerCase(); return (!q || text.includes(q)) && (!date || p.date === date) && (!student || String(p.studentId) === String(student)) }) }
+        function paymentStudentName(p) {return database.students.find(s => String(s.id) === String(p.studentId))?.name || "Deleted Student"}
+        function paymentCourse(p) {return database.students.find(s => String(s.id) === String(p.studentId))?.course || "—"}
+        function openHistoryModal() {populateHistoryStudentFilter(); renderHistory(); $("historyModal").style.display = "flex"} function closeHistoryModal() {$("historyModal").style.display = "none"}
+        function populateHistoryStudentFilter() {const cur = $("historyStudentFilter").value; $("historyStudentFilter").innerHTML = '<option value="">All Students</option>' + database.students.map(s => `<option value="${safe(s.id)}">${safe(s.name)}</option>`).join(""); $("historyStudentFilter").value = cur}
+        function filteredPayments() {const q = $("historySearch").value.toLowerCase().trim(), date = $("historyDateFilter").value, student = $("historyStudentFilter").value; return database.payments.filter(p => {const text = [paymentStudentName(p), paymentCourse(p), p.method, p.receipt, p.note].join(" ").toLowerCase(); return (!q || text.includes(q)) && (!date || p.date === date) && (!student || String(p.studentId) === String(student))})}
         function renderHistory() {
             const list = filteredPayments(), body = $("historyTableBody"), total = list.reduce((a, p) => a + (Number(p.amount) || 0), 0), todayTotal = database.payments.filter(p => p.date === today()).reduce((a, p) => a + (Number(p.amount) || 0), 0), outstanding = database.students.reduce((a, s) => a + getBalance(s), 0);
             $("historyCount").textContent = list.length; $("historyTotal").textContent = money(total); $("historyToday").textContent = money(todayTotal); $("historyOutstanding").textContent = money(outstanding);
             body.innerHTML = list.length ? list.map(p => `<tr><td>${safe(p.date)}</td><td><strong>${safe(paymentStudentName(p))}</strong></td><td>${safe(paymentCourse(p))}</td><td><strong>${money(p.amount)}</strong></td><td>${safe(p.method)}</td><td>${safe(p.receipt || "—")}</td><td>${safe(p.note || "—")}</td><td><button class="action-icon-btn" title="Delete payment" onclick="deletePayment('${safe(p.id)}')">🗑️</button></td></tr>`).join("") : '<tr><td colspan="8" class="empty">No payment transactions found.</td></tr>';
         }
 
-        function openCourseModal() { $("courseForm").reset(); $("courseModal").style.display = "flex"; setTimeout(() => $("courseName").focus(), 50) } function closeCourseModal() { $("courseModal").style.display = "none" }
-        function renderCourses() { const q = $("courseSearch").value.toLowerCase().trim(), list = database.courses.filter(c => c.toLowerCase().includes(q)); $("courseGrid").innerHTML = list.length ? list.map(c => `<div class="course-card"><h4>${safe(c)}</h4><p>${database.students.filter(s => s.course === c).length} enrolled student(s)</p><div class="course-actions"><button class="btn-danger" onclick="deleteCourse('${encodeURIComponent(c)}')">Delete</button></div></div>`).join("") : '<div class="empty">No courses found.</div>' }
-        async function saveCourse(e) { e.preventDefault(); const name = $("courseName").value.trim(); if (!name) return; if (database.courses.some(c => c.toLowerCase() === name.toLowerCase())) { alert("Course already exists."); return } database.courses.unshift(name); try { await commit("Saving course online...", "Course added."); closeCourseModal() } catch (e) { } }
-        async function deleteCourse(encoded) { const name = decodeURIComponent(encoded); if (database.students.some(s => s.course === name)) { alert("This course is assigned to students and cannot be deleted."); return } if (!confirm(`Delete course "${name}"?`)) return; database.courses = database.courses.filter(c => c !== name); try { await commit("Deleting course online...", "Course deleted."); } catch (e) { } }
+        function openCourseModal() {$("courseForm").reset(); $("courseModal").style.display = "flex"; setTimeout(() => $("courseName").focus(), 50)} function closeCourseModal() {$("courseModal").style.display = "none"}
+        function renderCourses() {const q = $("courseSearch").value.toLowerCase().trim(), list = database.courses.filter(c => c.toLowerCase().includes(q)); $("courseGrid").innerHTML = list.length ? list.map(c => `<div class="course-card"><h4>${safe(c)}</h4><p>${database.students.filter(s => s.course === c).length} enrolled student(s)</p><div class="course-actions"><button class="btn-danger" onclick="deleteCourse('${encodeURIComponent(c)}')">Delete</button></div></div>`).join("") : '<div class="empty">No courses found.</div>'}
+        async function saveCourse(e) {e.preventDefault(); const name = $("courseName").value.trim(); if (!name) return; if (database.courses.some(c => c.toLowerCase() === name.toLowerCase())) {alert("Course already exists."); return } database.courses.unshift(name); try {await commit("Saving course online...", "Course added."); closeCourseModal()} catch (e) { } }
+        async function deleteCourse(encoded) {const name = decodeURIComponent(encoded); if (database.students.some(s => s.course === name)) {alert("This course is assigned to students and cannot be deleted."); return } if (!confirm(`Delete course "${name}"?`)) return; database.courses = database.courses.filter(c => c !== name); try {await commit("Deleting course online...", "Course deleted.");} catch (e) { } }
 
-        function voucherData(s) { const fee = Number(s.fee) || 0, received = studentReceived(s.id), balance = Math.max(0, fee - received); return { fee, received, balance, receipt: s.receipt || ("AUTO-" + String(Date.now()).slice(-6)) } }
+        function voucherData(s) {const fee = Number(s.fee) || 0, received = studentReceived(s.id), balance = Math.max(0, fee - received); return {fee, received, balance, receipt: s.receipt || ("AUTO-" + String(Date.now()).slice(-6))}}
         function renderVoucherPreview(index) {
             const s = database.students[index]; if (!s) return; voucherStudentIndex = index; const d = voucherData(s);
             $("voucherPreview").innerHTML = `<div class="voucher-head"><div><img class="voucher-brand-logo" src="logo.png" alt="USLOOB"><h1>USLOOB</h1><p>OFFICIAL FEE VOUCHER</p></div><div class="voucher-meta"><div><strong>Receipt:</strong> ${safe("#" + d.receipt)}</div><div><strong>Date:</strong> ${safe(s.date || today())}</div></div></div><div class="voucher-body"><div class="voucher-title">STUDENT DETAILS</div><div class="voucher-details"><div class="voucher-detail"><small>Student Name</small><strong>${safe(s.name)}</strong></div><div class="voucher-detail"><small>Father's Name</small><strong>${safe(s.fatherName)}</strong></div><div class="voucher-detail"><small>Course</small><strong>${safe(s.course)}</strong></div><div class="voucher-detail"><small>Phone Number</small><strong>${safe(s.phone)}</strong></div></div><div class="voucher-totals"><div class="voucher-total"><small>TOTAL COURSE FEE</small><strong>${money(d.fee)}</strong></div><div class="voucher-total"><small>TOTAL RECEIVED</small><strong>${money(d.received)}</strong></div><div class="voucher-total"><small>OUTSTANDING</small><strong>${money(d.balance)}</strong></div></div><div class="voucher-foot"><div class="signature">Student Signature</div><div class="signature">Authorized Signature / Stamp</div></div></div>`;
             $("voucherModal").style.display = "flex";
         }
-        function exportFeeVoucher(index) { renderVoucherPreview(index) }
-        function wrapText(ctx, text, maxWidth) { const words = String(text || "").split(" "), lines = []; let line = ""; for (const word of words) { const t = line ? line + " " + word : word; if (ctx.measureText(t).width > maxWidth && line) { lines.push(line); line = word } else line = t } if (line) lines.push(line); return lines }
+        function exportFeeVoucher(index) {renderVoucherPreview(index)}
+        function wrapText(ctx, text, maxWidth) {const words = String(text || "").split(" "), lines = []; let line = ""; for (const word of words) {const t = line ? line + " " + word : word; if (ctx.measureText(t).width > maxWidth && line) {lines.push(line); line = word} else line = t} if (line) lines.push(line); return lines}
         function drawFeeVoucher(s) {
             const d = voucherData(s), c = $("exportCanvas"), ctx = c.getContext("2d"), W = 1200, H = 760; c.width = W; c.height = H; ctx.clearRect(0, 0, W, H); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
             ctx.strokeStyle = "#050505"; ctx.lineWidth = 8; ctx.strokeRect(4, 4, W - 8, H - 8); ctx.fillStyle = "#050505"; ctx.fillRect(8, 8, W - 16, 150);
             ctx.fillStyle = "#fff"; ctx.font = "bold 40px Arial"; ctx.fillText("USLOOB", 42, 62); ctx.font = "18px Arial"; ctx.fillText("OFFICIAL FEE VOUCHER", 42, 94); ctx.font = "bold 18px Arial"; ctx.fillText("Receipt: #" + d.receipt, 870, 58); ctx.font = "16px Arial"; ctx.fillText("Date: " + (s.date || today()), 870, 91);
             ctx.fillStyle = "#111827"; ctx.font = "bold 22px Arial"; ctx.fillText("STUDENT DETAILS", 48, 195); ctx.strokeStyle = "#d0d5dd"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(48, 211); ctx.lineTo(1152, 211); ctx.stroke();
-            [["STUDENT NAME", s.name], ["FATHER'S NAME", s.fatherName], ["COURSE", s.course], ["PHONE NUMBER", s.phone]].forEach((f, i) => { const col = i % 2, row = Math.floor(i / 2), x = 48 + col * 552, y = 230 + row * 76; ctx.fillStyle = "#667085"; ctx.font = "bold 13px Arial"; ctx.fillText(f[0], x + 16, y + 22); ctx.fillStyle = "#111827"; ctx.font = "bold 19px Arial"; wrapText(ctx, f[1], 500).slice(0, 2).forEach((line, n) => ctx.fillText(line, x + 16, y + 50 + n * 22)); ctx.strokeStyle = "#eaecf0"; ctx.strokeRect(x, y, 536, 65) });
-            const boxY = 410, boxW = 350;[["TOTAL COURSE FEE", d.fee, "#111827"], ["TOTAL RECEIVED", d.received, "#111827"], ["OUTSTANDING", d.balance, d.balance > 0 ? "#dc2626" : "#059669"]].forEach((it, i) => { const x = 48 + i * 368; ctx.fillStyle = "#f8fafc"; ctx.fillRect(x, boxY, boxW, 115); ctx.strokeStyle = "#d0d5dd"; ctx.strokeRect(x, boxY, boxW, 115); ctx.fillStyle = "#667085"; ctx.font = "bold 13px Arial"; ctx.fillText(it[0], x + 20, boxY + 32); ctx.fillStyle = it[2]; ctx.font = "bold 28px Arial"; ctx.fillText(money(it[1]), x + 20, boxY + 76) });
+            [["STUDENT NAME", s.name], ["FATHER'S NAME", s.fatherName], ["COURSE", s.course], ["PHONE NUMBER", s.phone]].forEach((f, i) => {const col = i % 2, row = Math.floor(i / 2), x = 48 + col * 552, y = 230 + row * 76; ctx.fillStyle = "#667085"; ctx.font = "bold 13px Arial"; ctx.fillText(f[0], x + 16, y + 22); ctx.fillStyle = "#111827"; ctx.font = "bold 19px Arial"; wrapText(ctx, f[1], 500).slice(0, 2).forEach((line, n) => ctx.fillText(line, x + 16, y + 50 + n * 22)); ctx.strokeStyle = "#eaecf0"; ctx.strokeRect(x, y, 536, 65)});
+            const boxY = 410, boxW = 350;[["TOTAL COURSE FEE", d.fee, "#111827"], ["TOTAL RECEIVED", d.received, "#111827"], ["OUTSTANDING", d.balance, d.balance > 0 ? "#dc2626" : "#059669"]].forEach((it, i) => {const x = 48 + i * 368; ctx.fillStyle = "#f8fafc"; ctx.fillRect(x, boxY, boxW, 115); ctx.strokeStyle = "#d0d5dd"; ctx.strokeRect(x, boxY, boxW, 115); ctx.fillStyle = "#667085"; ctx.font = "bold 13px Arial"; ctx.fillText(it[0], x + 20, boxY + 32); ctx.fillStyle = it[2]; ctx.font = "bold 28px Arial"; ctx.fillText(money(it[1]), x + 20, boxY + 76)});
             ctx.fillStyle = "#667085"; ctx.font = "13px Arial"; ctx.fillText("This voucher is issued by USLOOB as an official fee record.", 48, 585); ctx.strokeStyle = "#98a2b3"; ctx.beginPath(); ctx.moveTo(80, 675); ctx.lineTo(330, 675); ctx.moveTo(850, 675); ctx.lineTo(1120, 675); ctx.stroke(); ctx.fillText("Student Signature", 145, 698); ctx.fillText("Authorized Signature / Stamp", 895, 698);
             return c.toDataURL("image/png")
         }
-        async function exportCurrentVoucher() { const s = database.students[voucherStudentIndex]; if (!s) return; showLoading("Preparing fee voucher PNG..."); try { const path = await downloadDataUrl(drawFeeVoucher(s), `USLOOB_Fee_Voucher_${safeFilename(s.name)}.png`); if (path) { $("voucherModal").style.display = "none"; voucherStudentIndex = -1; toast("Fee voucher exported successfully.") } } catch (e) { alert("Voucher export failed: " + e.message) } finally { hideLoading() } }
+        async function exportCurrentVoucher() {const s = database.students[voucherStudentIndex]; if (!s) return; showLoading("Preparing fee voucher PNG..."); try {const path = await downloadDataUrl(drawFeeVoucher(s), `USLOOB_Fee_Voucher_${safeFilename(s.name)}.png`); if (path) {$("voucherModal").style.display = "none"; voucherStudentIndex = -1; toast("Fee voucher exported successfully.")} } catch (e) {alert("Voucher export failed: " + e.message)} finally {hideLoading()} }
 
-        function safeFilename(s) { return String(s || "Student").replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "") || "Student" }
-        function getStatementRecords() { const p = $("exportPeriod").value; if (p === "all") return { records: [...database.payments], label: "All Payment Records" }; if (p === "daily") { const d = $("exportDate").value; if (!d) throw Error("Please select a date."); return { records: database.payments.filter(x => x.date === d), label: "Daily Statement - " + d } } if (p === "monthly") { const m = $("exportMonth").value; if (!m) throw Error("Please select a month."); return { records: database.payments.filter(x => x.date?.startsWith(m)), label: "Monthly Statement - " + m } } const y = $("exportYear").value; if (!y) throw Error("Please select a year."); return { records: database.payments.filter(x => x.date?.startsWith(String(y))), label: "Yearly Statement - " + y } }
+        function safeFilename(s) {return String(s || "Student").replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "") || "Student"}
+        function getStatementRecords() {const p = $("exportPeriod").value; if (p === "all") return {records: [...database.payments], label: "All Payment Records"}; if (p === "daily") {const d = $("exportDate").value; if (!d) throw Error("Please select a date."); return {records: database.payments.filter(x => x.date === d), label: "Daily Statement - " + d}} if (p === "monthly") {const m = $("exportMonth").value; if (!m) throw Error("Please select a month."); return {records: database.payments.filter(x => x.date?.startsWith(m)), label: "Monthly Statement - " + m}} const y = $("exportYear").value; if (!y) throw Error("Please select a year."); return {records: database.payments.filter(x => x.date?.startsWith(String(y))), label: "Yearly Statement - " + y}}
         function generateStatementPNG(records, label) {
             const c = $("exportCanvas"), ctx = c.getContext("2d"), rowH = 34, W = 1050, H = Math.max(480, 190 + records.length * rowH); c.width = W; c.height = H; ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H); ctx.fillStyle = "#050505"; ctx.fillRect(0, 0, W, 82); ctx.fillStyle = "#fff"; ctx.font = "bold 25px Arial"; ctx.fillText("USLOOB", 25, 36); ctx.font = "13px Arial"; ctx.fillText(label, 25, 61);
             const y0 = 110; ctx.fillStyle = "#f2f4f7"; ctx.fillRect(20, y0, W - 40, 38); ctx.fillStyle = "#111827"; ctx.font = "bold 11px Arial";["DATE", "STUDENT", "COURSE", "AMOUNT", "METHOD", "RECEIPT"].forEach((x, i) => ctx.fillText(x, [30, 140, 385, 650, 770, 900][i], y0 + 24));
-            let y = y0 + 68, total = 0; ctx.font = "12px Arial"; records.forEach(p => { total += Number(p.amount) || 0; ctx.fillStyle = "#344054"; ctx.fillText(p.date || "", 30, y); ctx.fillText(paymentStudentName(p).slice(0, 30), 140, y); ctx.fillText(paymentCourse(p).slice(0, 28), 385, y); ctx.fillText(money(p.amount), 650, y); ctx.fillText((p.method || "").slice(0, 16), 770, y); ctx.fillText((p.receipt || "—").slice(0, 15), 900, y); ctx.strokeStyle = "#eaecf0"; ctx.beginPath(); ctx.moveTo(20, y + 10); ctx.lineTo(W - 20, y + 10); ctx.stroke(); y += rowH });
+            let y = y0 + 68, total = 0; ctx.font = "12px Arial"; records.forEach(p => {total += Number(p.amount) || 0; ctx.fillStyle = "#344054"; ctx.fillText(p.date || "", 30, y); ctx.fillText(paymentStudentName(p).slice(0, 30), 140, y); ctx.fillText(paymentCourse(p).slice(0, 28), 385, y); ctx.fillText(money(p.amount), 650, y); ctx.fillText((p.method || "").slice(0, 16), 770, y); ctx.fillText((p.receipt || "—").slice(0, 15), 900, y); ctx.strokeStyle = "#eaecf0"; ctx.beginPath(); ctx.moveTo(20, y + 10); ctx.lineTo(W - 20, y + 10); ctx.stroke(); y += rowH});
             ctx.fillStyle = "#f8fafc"; ctx.fillRect(20, y, W - 40, 48); ctx.strokeStyle = "#d0d5dd"; ctx.strokeRect(20, y, W - 40, 48); ctx.fillStyle = "#111827"; ctx.font = "bold 14px Arial"; ctx.fillText(`Transactions: ${records.length}`, 35, y + 30); ctx.fillText(`Total Received: ${money(total)}`, 300, y + 30);
             return downloadDataUrl(c.toDataURL("image/png"), `USLOOB_Payment_Statement_${Date.now()}.png`)
         }
-        function pdfEscape(s) { return String(s ?? "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/[^\x20-\x7E]/g, "?") }
+        function pdfEscape(s) {return String(s ?? "").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/[^\x20-\x7E]/g, "?")}
         function makeSimplePDF(title, lines) {
-            const pageW = 595, pageH = 842, margin = 35, lineH = 15, usable = pageH - 75, pages = []; let page = []; lines.forEach(line => { if (page.length * lineH > usable) { pages.push(page); page = [] } page.push(line) }); if (page.length || !pages.length) pages.push(page);
-            const objects = [], add = x => { objects.push(x); return objects.length }, fontObj = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"), pageObjs = [];
-            pages.forEach(pg => { let stream = "BT\n/F1 9 Tf\n" + margin + " " + (pageH - margin) + " Td\n"; pg.forEach((line, i) => { if (i === 0) stream += "/F1 15 Tf\n0 -5 Td\n(" + pdfEscape(line) + ") Tj\n/F1 9 Tf\n0 -18 Td\n"; else stream += "(" + pdfEscape(line) + ") Tj\n0 -" + lineH + " Td\n" }); stream += "ET"; const content = add(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`); pageObjs.push(add(`<< /Type /Page /Parent PAGES /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${fontObj} 0 R >> >> /Contents ${content} 0 R >>`)) });
+            const pageW = 595, pageH = 842, margin = 35, lineH = 15, usable = pageH - 75, pages = []; let page = []; lines.forEach(line => {if (page.length * lineH > usable) {pages.push(page); page = []} page.push(line)}); if (page.length || !pages.length) pages.push(page);
+            const objects = [], add = x => {objects.push(x); return objects.length}, fontObj = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"), pageObjs = [];
+            pages.forEach(pg => {let stream = "BT\n/F1 9 Tf\n" + margin + " " + (pageH - margin) + " Td\n"; pg.forEach((line, i) => {if (i === 0) stream += "/F1 15 Tf\n0 -5 Td\n(" + pdfEscape(line) + ") Tj\n/F1 9 Tf\n0 -18 Td\n"; else stream += "(" + pdfEscape(line) + ") Tj\n0 -" + lineH + " Td\n"}); stream += "ET"; const content = add(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`); pageObjs.push(add(`<< /Type /Page /Parent PAGES /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${fontObj} 0 R >> >> /Contents ${content} 0 R >>`))});
             const pagesObj = add(`<< /Type /Pages /Kids [${pageObjs.map(n => n + " 0 R").join(" ")}] /Count ${pageObjs.length} >>`); pageObjs.forEach(n => objects[n - 1] = objects[n - 1].replace("PAGES", pagesObj + " 0 R")); const catalog = add(`<< /Type /Catalog /Pages ${pagesObj} 0 R >>`);
-            let pdf = "%PDF-1.4\n", offsets = [0]; objects.forEach((obj, i) => { offsets[i + 1] = pdf.length; pdf += (i + 1) + " 0 obj\n" + obj + "\nendobj\n" }); const xref = pdf.length; pdf += "xref\n0 " + (objects.length + 1) + "\n0000000000 65535 f \n"; for (let i = 1; i < offsets.length; i++)pdf += String(offsets[i]).padStart(10, "0") + " 00000 n \n"; pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`; return new Blob([pdf], { type: "application/pdf" })
+            let pdf = "%PDF-1.4\n", offsets = [0]; objects.forEach((obj, i) => {offsets[i + 1] = pdf.length; pdf += (i + 1) + " 0 obj\n" + obj + "\nendobj\n"}); const xref = pdf.length; pdf += "xref\n0 " + (objects.length + 1) + "\n0000000000 65535 f \n"; for (let i = 1; i < offsets.length; i++)pdf += String(offsets[i]).padStart(10, "0") + " 00000 n \n"; pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`; return new Blob([pdf], {type: "application/pdf"})
         }
-        function downloadDataUrl(dataUrl, name) { const parts = String(dataUrl).split(",", 2), mime = (parts[0].match(/data:([^;]+)/i) || [])[1] || "application/octet-stream", binary = atob(parts[1] || ""), bytes = new Uint8Array(binary.length); for (let i = 0; i < binary.length; i++)bytes[i] = binary.charCodeAt(i); return downloadBlob(new Blob([bytes], { type: mime }), name) }
+        function downloadDataUrl(dataUrl, name) {const parts = String(dataUrl).split(",", 2), mime = (parts[0].match(/data:([^;]+)/i) || [])[1] || "application/octet-stream", binary = atob(parts[1] || ""), bytes = new Uint8Array(binary.length); for (let i = 0; i < binary.length; i++)bytes[i] = binary.charCodeAt(i); return downloadBlob(new Blob([bytes], {type: mime}), name)}
         async function downloadBlob(blob, name) {
             const safeName = String(name || "export").replace(/[\\/:*?"<>|]/g, "_");
             try {
-                if (typeof window.showSaveFilePicker === "function") { const ext = safeName.toLowerCase().match(/\.(pdf|png|csv|json)$/)?.[1] || "", types = ext === "pdf" ? [{ description: "PDF Document", accept: { "application/pdf": [".pdf"] } }] : ext === "png" ? [{ description: "PNG Image", accept: { "image/png": [".png"] } }] : ext === "csv" ? [{ description: "CSV File", accept: { "text/csv": [".csv"] } }] : ext === "json" ? [{ description: "JSON File", accept: { "application/json": [".json"] } }] : []; const h = await window.showSaveFilePicker({ suggestedName: safeName, ...(types.length ? { types } : {}) }); const w = await h.createWritable(); await w.write(blob); await w.close(); return h.name || safeName }
+                if (typeof window.showSaveFilePicker === "function") {const ext = safeName.toLowerCase().match(/\.(pdf|png|csv|json)$/)?.[1] || "", types = ext === "pdf" ? [{description: "PDF Document", accept: {"application/pdf": [".pdf"]}}] : ext === "png" ? [{description: "PNG Image", accept: {"image/png": [".png"]}}] : ext === "csv" ? [{description: "CSV File", accept: {"text/csv": [".csv"]}}] : ext === "json" ? [{description: "JSON File", accept: {"application/json": [".json"]}}] : []; const h = await window.showSaveFilePicker({suggestedName: safeName, ...(types.length ? {types} : {})}); const w = await h.createWritable(); await w.write(blob); await w.close(); return h.name || safeName}
                 const url = URL.createObjectURL(blob), a = document.createElement("a"); a.href = url; a.download = safeName; a.style.display = "none"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); return safeName
-            } catch (e) { if (e.name === "AbortError" || e.name === "NotAllowedError") return null; throw e }
+            } catch (e) {if (e.name === "AbortError" || e.name === "NotAllowedError") return null; throw e}
         }
-        function exportPaymentsPDF(records, label) { const lines = [`USLOOB - ${label}`, "Official Payment History Report", "", "Date | Student | Course | Amount | Method | Receipt", "--------------------------------------------------------------------------------"]; let total = 0; records.forEach(p => { total += Number(p.amount) || 0; lines.push(`${p.date || ""} | ${paymentStudentName(p).slice(0, 24)} | ${paymentCourse(p).slice(0, 20)} | ${money(p.amount)} | ${(p.method || "").slice(0, 12)} | ${(p.receipt || "-").slice(0, 12)}`) }); lines.push("", `Transactions: ${records.length}    Total Received: ${money(total)}`); return downloadBlob(makeSimplePDF(label, lines), `USLOOB_Payment_Statement_${Date.now()}.pdf`) }
-        async function generateStatement() { try { const { records, label } = getStatementRecords(), format = $("statementFormat").value; showLoading("Generating statement..."); const path = format === "png" ? await generateStatementPNG(records, label) : await exportPaymentsPDF(records, label); if (path) { $("exportModal").style.display = "none"; toast("Statement exported successfully.") } } catch (e) { alert("Export failed: " + e.message) } finally { hideLoading() } }
-        async function exportHistoryPDF() { showLoading("Generating payment history PDF..."); try { const p = await exportPaymentsPDF(filteredPayments(), "Filtered Payment History"); if (p) toast("Payment history PDF exported.") } catch (e) { alert(e.message) } finally { hideLoading() } }
-        async function exportHistoryCSV() { showLoading("Generating payment history CSV..."); try { const rows = [["Date", "Student", "Course", "Amount", "Method", "Receipt", "Note"], ...filteredPayments().map(p => [p.date, paymentStudentName(p), paymentCourse(p), p.amount, p.method, p.receipt, p.note])]; const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), `USLOOB_Payment_History_${Date.now()}.csv`); if (p) toast("Payment history CSV exported.") } catch (e) { alert(e.message) } finally { hideLoading() } }
+        function exportPaymentsPDF(records, label) {const lines = [`USLOOB - ${label}`, "Official Payment History Report", "", "Date | Student | Course | Amount | Method | Receipt", "--------------------------------------------------------------------------------"]; let total = 0; records.forEach(p => {total += Number(p.amount) || 0; lines.push(`${p.date || ""} | ${paymentStudentName(p).slice(0, 24)} | ${paymentCourse(p).slice(0, 20)} | ${money(p.amount)} | ${(p.method || "").slice(0, 12)} | ${(p.receipt || "-").slice(0, 12)}`)}); lines.push("", `Transactions: ${records.length}    Total Received: ${money(total)}`); return downloadBlob(makeSimplePDF(label, lines), `USLOOB_Payment_Statement_${Date.now()}.pdf`)}
+        async function generateStatement() {try {const {records, label} = getStatementRecords(), format = $("statementFormat").value; showLoading("Generating statement..."); const path = format === "png" ? await generateStatementPNG(records, label) : await exportPaymentsPDF(records, label); if (path) {$("exportModal").style.display = "none"; toast("Statement exported successfully.")} } catch (e) {alert("Export failed: " + e.message)} finally {hideLoading()} }
+        async function exportHistoryPDF() {showLoading("Generating payment history PDF..."); try {const p = await exportPaymentsPDF(filteredPayments(), "Filtered Payment History"); if (p) toast("Payment history PDF exported.")} catch (e) {alert(e.message)} finally {hideLoading()} }
+        async function exportHistoryCSV() {showLoading("Generating payment history CSV..."); try {const rows = [["Date", "Student", "Course", "Amount", "Method", "Receipt", "Note"], ...filteredPayments().map(p => [p.date, paymentStudentName(p), paymentCourse(p), p.amount, p.method, p.receipt, p.note])]; const csv = rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], {type: "text/csv;charset=utf-8"}), `USLOOB_Payment_History_${Date.now()}.csv`); if (p) toast("Payment history CSV exported.")} catch (e) {alert(e.message)} finally {hideLoading()} }
 
-        async function backupDatabase() { showLoading("Creating database backup..."); try { const p = await downloadBlob(new Blob([JSON.stringify(database, null, 2)], { type: "application/json" }), `USLOOB_Backup_${today()}.json`); if (p) toast("Database backup exported successfully.") } catch (e) { alert("Backup failed: " + e.message) } finally { hideLoading() } }
+        async function backupDatabase() {showLoading("Creating database backup..."); try {const p = await downloadBlob(new Blob([JSON.stringify(database, null, 2)], {type: "application/json"}), `USLOOB_Backup_${today()}.json`); if (p) toast("Database backup exported successfully.")} catch (e) {alert("Backup failed: " + e.message)} finally {hideLoading()} }
         function restoreDatabase(file) {
             showLoading("Reading database backup...");
             const reader = new FileReader();
-            reader.onload = async () => { try { const imported = JSON.parse(reader.result); if (!imported || !Array.isArray(imported.students)) throw Error("Invalid USLOOB backup."); database = imported; normalizeDatabase(); await saveOnlineDatabase(); applyTheme(); refreshUI(); toast("Backup restored to the online database.") } catch (e) { alert("Restore failed: " + e.message) } finally { hideLoading(); $("restoreFile").value = "" } };
-            reader.onerror = () => { hideLoading(); alert("Could not read the backup file.") }; reader.readAsText(file)
+            reader.onload = async () => {try {const imported = JSON.parse(reader.result); if (!imported || !Array.isArray(imported.students)) throw Error("Invalid USLOOB backup."); database = imported; normalizeDatabase(); await saveOnlineDatabase(); applyTheme(); refreshUI(); toast("Backup restored to the online database.")} catch (e) {alert("Restore failed: " + e.message)} finally {hideLoading(); $("restoreFile").value = ""} };
+            reader.onerror = () => {hideLoading(); alert("Could not read the backup file.")}; reader.readAsText(file)
         }
-        function csvEscape(v) { return `"${String(v ?? "").replace(/"/g, '""')}"` }
-        async function exportStudentsCSV() { const rows = [["ID", "Name", "Father's Name", "Phone", "Course", "Total Fee", "Received", "Balance", "Status", "Enrollment Date", "Receipt"], ...database.students.map(s => [s.id, s.name, s.fatherName, s.phone, s.course, s.fee, studentReceived(s.id), getBalance(s), s.status, s.date, s.receipt])]; const csv = rows.map(r => r.map(csvEscape).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), `USLOOB_Students_${today()}.csv`); if (p) toast("Students CSV exported.") }
-        async function exportPaymentsCSV() { const rows = [["ID", "Date", "Student", "Course", "Amount", "Method", "Receipt", "Note"], ...database.payments.map(p => [p.id, p.date, paymentStudentName(p), paymentCourse(p), p.amount, p.method, p.receipt, p.note])]; const csv = rows.map(r => r.map(csvEscape).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), `USLOOB_Payments_${today()}.csv`); if (p) toast("Payments CSV exported.") }
-        async function exportJSON() { const p = await downloadBlob(new Blob([JSON.stringify(database, null, 2)], { type: "application/json" }), `USLOOB_Database_${today()}.json`); if (p) toast("JSON exported.") }
+        function csvEscape(v) {return `"${String(v ?? "").replace(/"/g, '""')}"`}
+        async function exportStudentsCSV() {const rows = [["ID", "Name", "Father's Name", "Phone", "Course", "Total Fee", "Received", "Balance", "Status", "Enrollment Date", "Receipt"], ...database.students.map(s => [s.id, s.name, s.fatherName, s.phone, s.course, s.fee, studentReceived(s.id), getBalance(s), s.status, s.date, s.receipt])]; const csv = rows.map(r => r.map(csvEscape).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], {type: "text/csv;charset=utf-8"}), `USLOOB_Students_${today()}.csv`); if (p) toast("Students CSV exported.")}
+        async function exportPaymentsCSV() {const rows = [["ID", "Date", "Student", "Course", "Amount", "Method", "Receipt", "Note"], ...database.payments.map(p => [p.id, p.date, paymentStudentName(p), paymentCourse(p), p.amount, p.method, p.receipt, p.note])]; const csv = rows.map(r => r.map(csvEscape).join(",")).join("\n"); const p = await downloadBlob(new Blob([csv], {type: "text/csv;charset=utf-8"}), `USLOOB_Payments_${today()}.csv`); if (p) toast("Payments CSV exported.")}
+        async function exportJSON() {const p = await downloadBlob(new Blob([JSON.stringify(database, null, 2)], {type: "application/json"}), `USLOOB_Database_${today()}.json`); if (p) toast("JSON exported.")}
         function printDashboard() {
             showLoading("Preparing dashboard for printing...");
-            setTimeout(() => { try { const rows = database.students.map(s => `<tr><td>${safe(s.name)}</td><td>${safe(s.fatherName)}</td><td>${safe(s.course)}</td><td>${safe(s.phone)}</td><td>${money(s.fee)}</td><td>${money(studentReceived(s.id))}</td><td>${money(getBalance(s))}</td><td>${safe(s.status)}</td></tr>`).join(""), w = window.open("", "_blank", "width=1100,height=800"); if (!w) { alert("Please allow pop-ups for printing."); return } w.document.write(`<!doctype html><html><head><title>USLOOB Report</title><style>body{font-family:Arial;padding:30px;color:#111}h1{margin-bottom:4px}p{color:#667085}table{width:100%;border-collapse:collapse;margin-top:25px}th{background:#050505;color:white}th,td{padding:8px;border:1px solid #ddd;text-align:left;font-size:11px}</style></head><body><h1>USLOOB</h1><p>Student Management Report — ${today()}</p><table><thead><tr><th>Name</th><th>Father</th><th>Course</th><th>Phone</th><th>Fee</th><th>Received</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>setTimeout(()=>window.print(),300)<\\/script></body></html>`); w.document.close(); toast("Print report opened.") } finally { hideLoading() } }, 120)
+            setTimeout(() => {try {const rows = database.students.map(s => `<tr><td>${safe(s.name)}</td><td>${safe(s.fatherName)}</td><td>${safe(s.course)}</td><td>${safe(s.phone)}</td><td>${money(s.fee)}</td><td>${money(studentReceived(s.id))}</td><td>${money(getBalance(s))}</td><td>${safe(s.status)}</td></tr>`).join(""), w = window.open("", "_blank", "width=1100,height=800"); if (!w) {alert("Please allow pop-ups for printing."); return } w.document.write(`<!doctype html><html><head><title>USLOOB Report</title><style>body{font-family:Arial;padding:30px;color:#111}h1{margin-bottom:4px}p{color:#667085}table{width:100%;border-collapse:collapse;margin-top:25px}th{background:#050505;color:white}th,td{padding:8px;border:1px solid #ddd;text-align:left;font-size:11px}</style></head><body><h1>USLOOB</h1><p>Student Management Report — ${today()}</p><table><thead><tr><th>Name</th><th>Father</th><th>Course</th><th>Phone</th><th>Fee</th><th>Received</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table><script>window.onload=()=>setTimeout(()=>window.print(),300)<\\/script></body></html>`); w.document.close(); toast("Print report opened.")} finally {hideLoading()} }, 120)
         }
         async function resetOnlineDatabase() {
             if (!confirm("WARNING: This will permanently replace the ONLINE USLOOB database with an empty database.\n\nContinue only if you have a backup.")) return;
-            database = structuredClone(DEFAULT_DB); try { await commit("Resetting online database...", "Online database reset."); showPage("dashboardPage") } catch (e) { }
+            database = structuredClone(DEFAULT_DB); try {await commit("Resetting online database...", "Online database reset."); showPage("dashboardPage")} catch (e) { }
         }
-        function logout() { if (!confirm("Are you sure you want to log out?")) return; window.location.href = "index.html" }
-        function refreshUI() { normalizeDatabase(); updateCards(); updateCourseDatalist(); renderStudents(); renderCourses(); renderHistory() }
+        function logout() {if (!confirm("Are you sure you want to log out?")) return; window.location.href = "index.html"}
+        function refreshUI() {normalizeDatabase(); updateCards(); updateCourseDatalist(); renderStudents(); renderCourses(); renderHistory()}
 
-        function closeModalOnBackdrop(e) { if (e.target === e.currentTarget) e.currentTarget.style.display = "none" }
+        function closeModalOnBackdrop(e) {if (e.target === e.currentTarget) e.currentTarget.style.display = "none"}
 
         document.addEventListener("DOMContentLoaded", async () => {
             startClock();
             $("openSidebarBtn").onclick = openSidebar; $("closeSidebarBtn").onclick = closeSidebar;
-            $("sidebarWindow").addEventListener("click", e => { if (e.target === $("sidebarWindow")) closeSidebar() });
+            $("sidebarWindow").addEventListener("click", e => {if (e.target === $("sidebarWindow")) closeSidebar()});
             document.querySelectorAll(".side-nav button[data-page]").forEach(b => b.onclick = () => showPage(b.dataset.page));
-            $("sidebarHistoryBtn").onclick = () => { closeSidebar(); openHistoryModal() };
-            $("sidebarAddStudentBtn").onclick = () => { closeSidebar(); openStudentModal(-1) };
+            $("sidebarHistoryBtn").onclick = () => {closeSidebar(); openHistoryModal()};
+            $("sidebarAddStudentBtn").onclick = () => {closeSidebar(); openStudentModal(-1)};
             $("openAddModalBtn").onclick = () => openStudentModal(-1); $("closeStudentModalBtn").onclick = closeStudentModal; $("cancelStudentModalBtn").onclick = closeStudentModal;
             $("sfee").oninput = calculateBalance; $("sreceived").oninput = calculateBalance; $("studentForm").onsubmit = saveStudent;
             $("searchInput").oninput = renderStudents; $("statusFilter").onchange = renderStudents;
             $("openHistoryBtn").onclick = openHistoryModal; $("closeHistoryModalBtn").onclick = closeHistoryModal; $("historySearch").oninput = renderHistory; $("historyDateFilter").onchange = renderHistory; $("historyStudentFilter").onchange = renderHistory;
             $("addPaymentBtn").onclick = () => openPaymentModal(""); $("exportHistoryPdfBtn").onclick = exportHistoryPDF; $("exportHistoryCsvBtn").onclick = exportHistoryCSV; $("closePaymentModalBtn").onclick = closePaymentModal; $("cancelPaymentBtn").onclick = closePaymentModal; $("paymentForm").onsubmit = savePayment;
-            $("openExportModalBtn").onclick = () => { $("exportDate").value ||= today(); $("exportMonth").value ||= today().slice(0, 7); $("exportYear").value ||= new Date().getFullYear(); $("exportModal").style.display = "flex" };
+            $("openExportModalBtn").onclick = () => {$("exportDate").value ||= today(); $("exportMonth").value ||= today().slice(0, 7); $("exportYear").value ||= new Date().getFullYear(); $("exportModal").style.display = "flex"};
             $("closeExportModalBtn").onclick = () => $("exportModal").style.display = "none"; $("cancelExportModalBtn").onclick = () => $("exportModal").style.display = "none";
-            $("exportPeriod").onchange = () => { const v = $("exportPeriod").value; $("dateSelectGroup").style.display = v === "daily" ? "flex" : "none"; $("monthSelectGroup").style.display = v === "monthly" ? "flex" : "none"; $("yearSelectGroup").style.display = v === "yearly" ? "flex" : "none" }; $("generateStatementBtn").onclick = generateStatement;
+            $("exportPeriod").onchange = () => {const v = $("exportPeriod").value; $("dateSelectGroup").style.display = v === "daily" ? "flex" : "none"; $("monthSelectGroup").style.display = v === "monthly" ? "flex" : "none"; $("yearSelectGroup").style.display = v === "yearly" ? "flex" : "none"}; $("generateStatementBtn").onclick = generateStatement;
             $("addCourseBtn").onclick = openCourseModal; $("closeCourseModalBtn").onclick = closeCourseModal; $("cancelCourseBtn").onclick = closeCourseModal; $("courseForm").onsubmit = saveCourse; $("courseSearch").oninput = renderCourses;
-            $("closeVoucherModalBtn").onclick = () => { $("voucherModal").style.display = "none"; voucherStudentIndex = -1 }; $("cancelVoucherBtn").onclick = () => { $("voucherModal").style.display = "none"; voucherStudentIndex = -1 }; $("exportVoucherBtn").onclick = exportCurrentVoucher;
+            $("closeVoucherModalBtn").onclick = () => {$("voucherModal").style.display = "none"; voucherStudentIndex = -1}; $("cancelVoucherBtn").onclick = () => {$("voucherModal").style.display = "none"; voucherStudentIndex = -1}; $("exportVoucherBtn").onclick = exportCurrentVoucher;
             $("backupBtn").onclick = backupDatabase; $("restoreBtn").onclick = () => $("restoreFile").click(); $("restoreFile").onchange = e => e.target.files[0] && restoreDatabase(e.target.files[0]);
             $("printDashboardBtn").onclick = printDashboard; $("reloadOnlineBtn").onclick = () => refreshFromServer("Reloading online database..."); $("reloadBtn").onclick = () => refreshFromServer("Reloading online database...");
-            $("exportStudentsCsvBtn").onclick = async () => { showLoading("Preparing students CSV..."); try { await exportStudentsCSV() } catch (e) { alert(e.message) } finally { hideLoading() } };
-            $("exportPaymentsCsvBtn").onclick = async () => { showLoading("Preparing payments CSV..."); try { await exportPaymentsCSV() } catch (e) { alert(e.message) } finally { hideLoading() } };
-            $("exportJsonBtn").onclick = async () => { showLoading("Preparing JSON export..."); try { await exportJSON() } catch (e) { alert(e.message) } finally { hideLoading() } };
+            $("exportStudentsCsvBtn").onclick = async () => {showLoading("Preparing students CSV..."); try {await exportStudentsCSV()} catch (e) {alert(e.message)} finally {hideLoading()} };
+            $("exportPaymentsCsvBtn").onclick = async () => {showLoading("Preparing payments CSV..."); try {await exportPaymentsCSV()} catch (e) {alert(e.message)} finally {hideLoading()} };
+            $("exportJsonBtn").onclick = async () => {showLoading("Preparing JSON export..."); try {await exportJSON()} catch (e) {alert(e.message)} finally {hideLoading()} };
             $("resetDbBtn").onclick = resetOnlineDatabase; $("logoutBtn").onclick = logout;
             document.querySelectorAll(".modal-overlay").forEach(m => m.addEventListener("click", closeModalOnBackdrop));
-            document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal-overlay").forEach(m => m.style.display = "none") });
+            document.addEventListener("keydown", e => {if (e.key === "Escape") document.querySelectorAll(".modal-overlay").forEach(m => m.style.display = "none")});
             showLoading("Connecting to USLOOB online database...");
-            try { await readOnlineDatabase(); applyTheme(); refreshUI() } catch (e) { console.error(e); database = structuredClone(DEFAULT_DB); normalizeDatabase(); refreshUI(); alert("USLOOB could not connect to the online database.\n\n" + e.message + "\n\nCheck that the Flask server is running and that CORS allows this page.") } finally { hideLoading() }
+            try {await readOnlineDatabase(); applyTheme(); refreshUI()} catch (e) {console.error(e); database = structuredClone(DEFAULT_DB); normalizeDatabase(); refreshUI(); alert("USLOOB could not connect to the online database.\n\n" + e.message + "\n\nCheck that the Flask server is running and that CORS allows this page.")} finally {hideLoading()}
         });
     </script>
 </body>
