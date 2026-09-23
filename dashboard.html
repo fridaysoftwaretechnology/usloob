@@ -148,7 +148,7 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(7, minmax(120px, 1fr));
+            grid-template-columns: repeat(8, minmax(120px, 1fr));
             gap: 13px;
             flex: none
         }
@@ -547,6 +547,39 @@
         .history-toolbar input,
         .history-toolbar select {
             height: 39px
+        }
+
+
+        .expense-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 14px
+        }
+
+        .expense-toolbar {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-bottom: 12px
+        }
+
+        .expense-toolbar input,
+        .expense-toolbar select {
+            height: 39px;
+            min-width: 145px
+        }
+
+        .expense-report-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px
+        }
+
+        .expense-report-total {
+            font-weight: 900;
+            color: #b42318
         }
 
         .sidebar-window {
@@ -1138,12 +1171,17 @@
                         <h3 id="cardCourses">0</h3>
                         <p>Courses</p>
                     </div>
+                    <div class="card-item">
+                        <h3 id="cardExpenses">Rs. 0</h3>
+                        <p>Total Expenses</p>
+                    </div>
                 </div>
                 <div class="toolbar-container">
                     <div class="action-group-left">
                         <button class="add-btn" id="openAddModalBtn">＋ Add Student</button>
                         <button class="export-btn" id="openExportModalBtn">📊 Export Statement</button>
                         <button class="btn-secondary" id="openHistoryBtn">🧾 Payment History</button>
+                        <button class="btn-danger" id="openExpenseModalBtn">＋ Add Expense</button><button class="btn-secondary" id="openExpenseReportBtn">📋 Expense Report</button>
                     </div>
                     <div class="search-wrapper"><span>🔍</span><input id="searchInput"
                             placeholder="Search name, father, course, phone..."></div>
@@ -1235,6 +1273,11 @@
                                 id="exportJsonBtn">JSON</button></div>
                     </div>
                     <div class="setting-card">
+                        <h4>Expense Management</h4>
+                        <p>Record institute expenses such as rent, utilities, salaries, supplies and other operating costs.</p>
+                        <button class="btn-danger" id="openExpenseSettingsBtn">＋ Add Expense</button><button class="btn-secondary" id="openExpenseReportSettingsBtn" style="margin-left:8px">📋 View Report</button>
+                    </div>
+                    <div class="setting-card">
                         <h4>Danger Zone</h4>
                         <p>Replace the online database with an empty USLOOB database. This cannot be undone unless you
                             have a backup.</p><button class="btn-danger" id="resetDbBtn">Reset Online Database</button>
@@ -1262,7 +1305,7 @@
                 <nav class="side-nav">
                     <button data-page="dashboardPage" class="active">🏠 Dashboard</button><button
                         data-page="dashboardPage">👨‍🎓 Students</button><button id="sidebarHistoryBtn">💳 Payment
-                        History</button>
+                        History</button><button id="sidebarExpenseReportBtn">💸 Expense Report</button>
                 </nav>
                 <div class="nav-section">Management</div>
                 <nav class="side-nav"><button data-page="coursesPage">📚 Courses</button><button
@@ -1422,6 +1465,139 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="expenseModalTitle">Add Expense</h3><button class="modal-close" id="closeExpenseModalBtn">✕</button>
+            </div>
+            <form id="expenseForm">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Expense Category</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Select Category</option>
+                                <option>Rent</option>
+                                <option>Utilities</option>
+                                <option>Salary</option>
+                                <option>Office Supplies</option>
+                                <option>Equipment</option>
+                                <option>Marketing</option>
+                                <option>Transport</option>
+                                <option>Maintenance</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Expense Amount (PKR)</label>
+                            <input type="number" id="expenseAmount" min="1" step="1" required placeholder="Enter amount">
+                        </div>
+                        <div class="form-group full">
+                            <label>Description</label>
+                            <input id="expenseDescription" required placeholder="What was this expense for?">
+                        </div>
+                        <div class="form-group">
+                            <label>Expense Date</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Method</label>
+                            <select id="expenseMethod">
+                                <option>Cash</option>
+                                <option>Bank Transfer</option>
+                                <option>JazzCash</option>
+                                <option>EasyPaisa</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group full">
+                            <label>Note</label>
+                            <input id="expenseNote" placeholder="Optional note">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelExpenseBtn">Cancel</button>
+                    <button class="btn-danger" type="submit" id="saveExpenseBtn">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="expenseReportModal">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <div>
+                    <h3>Expense Report</h3>
+                    <div class="section-subtitle">Review, filter, print and export all recorded institute expenses.</div>
+                </div>
+                <button class="modal-close" id="closeExpenseReportBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="expense-summary">
+                    <div class="mini-stat"><small>Filtered Expenses</small><strong id="expenseReportCount">0</strong></div>
+                    <div class="mini-stat"><small>Total Expense</small><strong id="expenseReportTotal">Rs. 0</strong></div>
+                    <div class="mini-stat"><small>Today</small><strong id="expenseReportToday">Rs. 0</strong></div>
+                    <div class="mini-stat"><small>Average Expense</small><strong id="expenseReportAverage">Rs. 0</strong></div>
+                </div>
+
+                <div class="expense-toolbar">
+                    <input id="expenseReportSearch" placeholder="Search category, description, note, method...">
+                    <select id="expenseReportCategory">
+                        <option value="">All Categories</option>
+                        <option>Rent</option>
+                        <option>Utilities</option>
+                        <option>Salary</option>
+                        <option>Office Supplies</option>
+                        <option>Equipment</option>
+                        <option>Marketing</option>
+                        <option>Transport</option>
+                        <option>Maintenance</option>
+                        <option>Other</option>
+                    </select>
+                    <select id="expenseReportMethod">
+                        <option value="">All Methods</option>
+                        <option>Cash</option>
+                        <option>Bank Transfer</option>
+                        <option>JazzCash</option>
+                        <option>EasyPaisa</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="date" id="expenseReportFrom" title="From date">
+                    <input type="date" id="expenseReportTo" title="To date">
+                    <button class="btn-secondary" id="clearExpenseFiltersBtn">Clear</button>
+                </div>
+
+                <div class="expense-report-actions">
+                    <button class="btn-danger" id="expenseReportAddBtn">＋ Add Expense</button>
+                    <button class="btn-success" id="exportExpensePdfBtn">📄 Export PDF</button>
+                    <button class="btn-secondary" id="exportExpenseCsvBtn">⬇ Export CSV</button>
+                    <button class="btn-primary" id="printExpenseReportBtn">🖨 Print Report</button>
+                </div>
+
+                <div class="main-table" style="height:430px">
+                    <div class="table-responsive">
+                        <table style="min-width:950px">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Note</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseReportTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="courseModal">
         <div class="modal-card">
             <div class="modal-header">
@@ -1510,16 +1686,17 @@
            Flask API:
            GET  https://fridaysoftwaretechnology.pythonanywhere.com/usloob/read
            POST https://fridaysoftwaretechnology.pythonanywhere.com/usloob/save
-           No localStorage database and no sync functionality.
+           USLOOB uses the Flask online database for all persistent data.
         ========================================================= */
-        const API_BASE = "https://fridaysoftwaretechnology.pythonanywhere.com";
+        const API_BASE = window.USLOOB_API_BASE || "https://fridaysoftwaretechnology.pythonanywhere.com";
         const READ_URL = API_BASE + "/usloob/read";
         const SAVE_URL = API_BASE + "/usloob/save";
 
-        const DEFAULT_DB = { auth: { username: "admin", password: "password" }, theme: "#050505", students: [], courses: [], payments: [], history: [] };
+        const DEFAULT_DB = { auth: { username: "admin", password: "password" }, theme: "#050505", students: [], courses: [], payments: [], history: [], expenses: [] };
         let database = structuredClone(DEFAULT_DB);
         let loadingDepth = 0;
         let voucherStudentIndex = -1;
+        let expenseEditingId = null;
 
         const $ = id => document.getElementById(id);
         const money = n => "Rs. " + (Number(n) || 0).toLocaleString("en-PK");
@@ -1539,6 +1716,16 @@
             database.courses = Array.isArray(database.courses) ? database.courses : [];
             database.payments = Array.isArray(database.payments) ? database.payments : [];
             database.history = Array.isArray(database.history) ? database.history : [];
+            database.expenses = Array.isArray(database.expenses) ? database.expenses : [];
+            database.expenses.forEach(e => {
+                e.id = String(e.id || uid("exp"));
+                e.category = String(e.category || "Other");
+                e.description = String(e.description || "");
+                e.amount = Number(e.amount) || 0;
+                e.date = e.date || today();
+                e.method = String(e.method || "Cash");
+                e.note = String(e.note || "");
+            });
             database.students.forEach(s => {
                 s.id = String(s.id || uid("stu")); s.name = String(s.name || ""); s.fatherName = String(s.fatherName ?? s.father ?? "");
                 s.phone = String(s.phone || ""); s.address = String(s.address || ""); s.course = String(s.course || ""); s.fee = Number(s.fee) || 0; s.received = Math.max(0, Number(s.received ?? s.receive ?? s.receiving) || 0);
@@ -1566,19 +1753,69 @@
             database.students.forEach(s => { if (s.course && !database.courses.some(c => c.toLowerCase() === s.course.toLowerCase())) database.courses.unshift(s.course) });
         }
 
-        async function readOnlineDatabase() {
-            const response = await fetch(READ_URL, { method: "GET", cache: "no-store", headers: { "Accept": "application/json" } });
-            if (!response.ok) throw new Error(`Server returned HTTP ${response.status}.`);
-            const result = await response.json();
-            if (!result || result.status !== true || !result.data || typeof result.data !== "object") throw new Error("The server returned an invalid USLOOB database.");
-            database = result.data; normalizeDatabase(); return database;
+        async function readJsonResponse(response) {
+            const text = await response.text();
+            let result = null;
+            try { result = text ? JSON.parse(text) : null; } catch (_) {}
+            return { result, text };
         }
+
+        async function readOnlineDatabase() {
+            let response;
+            try {
+                response = await fetch(READ_URL, {
+                    method: "GET",
+                    cache: "no-store",
+                    headers: { "Accept": "application/json" }
+                });
+            } catch (networkError) {
+                throw new Error("Cannot connect to the USLOOB server. Check the API URL, internet connection, and backend status.");
+            }
+
+            const { result, text } = await readJsonResponse(response);
+
+            if (!response.ok) {
+                const serverMessage = result?.message || result?.error || text?.slice(0, 500);
+                throw new Error(`Server returned HTTP ${response.status}${serverMessage ? ": " + serverMessage : "."}`);
+            }
+
+            if (!result || result.status !== true || !result.data || typeof result.data !== "object") {
+                throw new Error("The server returned an invalid USLOOB database response.");
+            }
+
+            database = result.data;
+            normalizeDatabase();
+            return database;
+        }
+
         async function saveOnlineDatabase() {
             normalizeDatabase();
-            const response = await fetch(SAVE_URL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(database) });
-            if (!response.ok) throw new Error(`Could not save database. Server returned HTTP ${response.status}.`);
-            const result = await response.json();
-            if (!result || result.status !== true) throw new Error(result?.message || "The online database rejected the save request.");
+
+            let response;
+            try {
+                response = await fetch(SAVE_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(database)
+                });
+            } catch (networkError) {
+                throw new Error("Cannot connect to the USLOOB server while saving. Check the API URL and backend status.");
+            }
+
+            const { result, text } = await readJsonResponse(response);
+
+            if (!response.ok) {
+                const serverMessage = result?.message || result?.error || text?.slice(0, 500);
+                throw new Error(`Could not save database. Server returned HTTP ${response.status}${serverMessage ? ": " + serverMessage : "."}`);
+            }
+
+            if (!result || result.status !== true) {
+                throw new Error(result?.message || "The online database rejected the save request.");
+            }
+
             return result;
         }
         async function refreshFromServer(message = "Loading USLOOB online database...") {
@@ -1610,7 +1847,9 @@
             database.students.forEach(s => { total += Number(s.fee) || 0; received += studentReceived(s.id); balance += getBalance(s) });
             $("cardTotalStudents").textContent = database.students.length; $("cardActiveStudents").textContent = database.students.filter(s => s.status === "active").length;
             $("cardCertifiedStudents").textContent = database.students.filter(s => s.status === "certified").length; $("cardRevenue").textContent = money(total);
+            const expenses = database.expenses.reduce((a, e) => a + (Number(e.amount) || 0), 0);
             $("cardReceived").textContent = money(received); $("cardBalance").textContent = money(balance); $("cardCourses").textContent = database.courses.length;
+            $("cardExpenses").textContent = money(expenses);
         }
         function updateCourseDatalist() { $("scourse-list").innerHTML = database.courses.map(c => `<option value="${safe(c)}"></option>`).join("") }
         function renderStudents() {
@@ -1689,6 +1928,343 @@
             const list = filteredPayments(), body = $("historyTableBody"), total = list.reduce((a, p) => a + (Number(p.amount) || 0), 0), todayTotal = database.payments.filter(p => p.date === today()).reduce((a, p) => a + (Number(p.amount) || 0), 0), outstanding = database.students.reduce((a, s) => a + getBalance(s), 0);
             $("historyCount").textContent = list.length; $("historyTotal").textContent = money(total); $("historyToday").textContent = money(todayTotal); $("historyOutstanding").textContent = money(outstanding);
             body.innerHTML = list.length ? list.map(p => `<tr><td>${safe(p.date)}</td><td><strong>${safe(paymentStudentName(p))}</strong></td><td>${safe(paymentCourse(p))}</td><td><strong>${money(p.amount)}</strong></td><td>${safe(p.method)}</td><td>${safe(p.receipt || "—")}</td><td>${safe(p.note || "—")}</td><td><button class="action-icon-btn" title="Delete payment" onclick="deletePayment('${safe(p.id)}')">🗑️</button></td></tr>`).join("") : '<tr><td colspan="8" class="empty">No payment transactions found.</td></tr>';
+        }
+
+        function openExpenseModal(expenseId = null) {
+            expenseEditingId = expenseId ? String(expenseId) : null;
+            $("expenseForm").reset();
+            $("expenseDate").value = today();
+            $("expenseModalTitle").textContent = expenseEditingId ? "Edit Expense" : "Add Expense";
+            $("saveExpenseBtn").textContent = expenseEditingId ? "Update Expense" : "Save Expense";
+
+            if (expenseEditingId) {
+                const item = database.expenses.find(e => String(e.id) === expenseEditingId);
+                if (!item) {
+                    expenseEditingId = null;
+                    $("expenseModalTitle").textContent = "Add Expense";
+                    $("saveExpenseBtn").textContent = "Save Expense";
+                } else {
+                    $("expenseCategory").value = item.category || "Other";
+                    $("expenseAmount").value = Number(item.amount) || 0;
+                    $("expenseDescription").value = item.description || "";
+                    $("expenseDate").value = item.date || today();
+                    $("expenseMethod").value = item.method || "Cash";
+                    $("expenseNote").value = item.note || "";
+                }
+            }
+
+            $("expenseModal").style.display = "flex";
+            setTimeout(() => $("expenseCategory").focus(), 50);
+        }
+
+        function closeExpenseModal() {
+            $("expenseModal").style.display = "none";
+            expenseEditingId = null;
+            $("expenseModalTitle").textContent = "Add Expense";
+            $("saveExpenseBtn").textContent = "Save Expense";
+        }
+
+        async function saveExpense(e) {
+            e.preventDefault();
+
+            const amount = Number($("expenseAmount").value) || 0;
+            const description = $("expenseDescription").value.trim();
+
+            if (amount <= 0) {
+                alert("Enter a valid expense amount.");
+                return;
+            }
+
+            if (!description) {
+                alert("Please enter an expense description.");
+                return;
+            }
+
+            const item = {
+                id: expenseEditingId || uid("exp"),
+                category: $("expenseCategory").value || "Other",
+                description,
+                amount,
+                date: $("expenseDate").value || today(),
+                method: $("expenseMethod").value || "Cash",
+                note: $("expenseNote").value.trim()
+            };
+
+            if (expenseEditingId) {
+                const index = database.expenses.findIndex(e => String(e.id) === String(expenseEditingId));
+                if (index < 0) {
+                    alert("The selected expense could not be found.");
+                    return;
+                }
+                database.expenses[index] = item;
+            } else {
+                database.expenses.unshift(item);
+            }
+
+            try {
+                await commit(
+                    expenseEditingId ? "Updating expense online..." : "Saving expense online...",
+                    expenseEditingId ? "Expense updated successfully." : "Expense added successfully."
+                );
+                closeExpenseModal();
+                if ($("expenseReportModal").style.display === "flex") renderExpenseReport();
+            } catch (err) {
+                /* commit already reports the error; keep the form open for correction/retry */
+            }
+        }
+
+        async function deleteExpense(expenseId) {
+            const id = String(expenseId || "");
+            const item = database.expenses.find(e => String(e.id) === id);
+            if (!item) {
+                alert("Expense not found.");
+                return;
+            }
+
+            if (!confirm(`Delete this expense of ${money(item.amount)}?`)) return;
+
+            const previous = database.expenses;
+            database.expenses = previous.filter(e => String(e.id) !== id);
+
+            try {
+                await commit("Deleting expense online...", "Expense deleted successfully.");
+                if ($("expenseReportModal").style.display === "flex") renderExpenseReport();
+            } catch (err) {
+                database.expenses = previous;
+                refreshUI();
+            }
+        }
+
+        function getFilteredExpenses() {
+            const search = $("expenseReportSearch").value.trim().toLowerCase();
+            const category = $("expenseReportCategory").value;
+            const method = $("expenseReportMethod").value;
+            const from = $("expenseReportFrom").value;
+            const to = $("expenseReportTo").value;
+
+            return database.expenses
+                .filter(e => {
+                    const haystack = [
+                        e.category,
+                        e.description,
+                        e.note,
+                        e.method,
+                        e.date
+                    ].join(" ").toLowerCase();
+
+                    if (search && !haystack.includes(search)) return false;
+                    if (category && e.category !== category) return false;
+                    if (method && e.method !== method) return false;
+                    if (from && String(e.date) < from) return false;
+                    if (to && String(e.date) > to) return false;
+                    return true;
+                })
+                .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+        }
+
+        function renderExpenseReport() {
+            const list = getFilteredExpenses();
+            const total = list.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+            const todayTotal = database.expenses
+                .filter(e => e.date === today())
+                .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+            const average = list.length ? total / list.length : 0;
+
+            $("expenseReportCount").textContent = list.length.toLocaleString("en-PK");
+            $("expenseReportTotal").textContent = money(total);
+            $("expenseReportToday").textContent = money(todayTotal);
+            $("expenseReportAverage").textContent = money(average);
+
+            const body = $("expenseReportTableBody");
+
+            body.innerHTML = list.length
+                ? list.map(e => `
+                    <tr>
+                        <td>${safe(e.date)}</td>
+                        <td><strong>${safe(e.category)}</strong></td>
+                        <td>${safe(e.description)}</td>
+                        <td><strong>${money(e.amount)}</strong></td>
+                        <td>${safe(e.method)}</td>
+                        <td>${safe(e.note || "—")}</td>
+                        <td>
+                            <div class="action-cell">
+                                <button class="action-icon-btn" title="Edit expense"
+                                    onclick="editExpense('${safe(e.id)}')">✏️</button>
+                                <button class="action-icon-btn" title="Delete expense"
+                                    onclick="deleteExpense('${safe(e.id)}')">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join("")
+                : '<tr><td colspan="7" class="empty">No expenses match the selected filters.</td></tr>';
+        }
+
+        function openExpenseReport() {
+            renderExpenseReport();
+            $("expenseReportModal").style.display = "flex";
+        }
+
+        function closeExpenseReport() {
+            $("expenseReportModal").style.display = "none";
+        }
+
+        function editExpense(expenseId) {
+            openExpenseModal(expenseId);
+        }
+
+        function expenseReportLines(records) {
+            const lines = [
+                "USLOOB - EXPENSE REPORT",
+                "Official Expense Management Report",
+                `Generated: ${new Date().toLocaleString("en-PK")}`,
+                "",
+                "Date | Category | Description | Amount | Method | Note",
+                "--------------------------------------------------------------------------------"
+            ];
+
+            let total = 0;
+
+            records.forEach(e => {
+                const amount = Number(e.amount) || 0;
+                total += amount;
+                lines.push(
+                    `${e.date || ""} | ${(e.category || "").slice(0, 16)} | ` +
+                    `${(e.description || "").slice(0, 28)} | ${money(amount)} | ` +
+                    `${(e.method || "").slice(0, 14)} | ${(e.note || "").slice(0, 24)}`
+                );
+            });
+
+            lines.push(
+                "",
+                `Expenses: ${records.length}`,
+                `Total Expenses: ${money(total)}`
+            );
+
+            return lines;
+        }
+
+        async function exportExpensePDF() {
+            const records = getFilteredExpenses();
+            if (!records.length) {
+                alert("There are no expenses to export for the selected filters.");
+                return;
+            }
+
+            showLoading("Generating expense report PDF...");
+            try {
+                const blob = makeSimplePDF("USLOOB Expense Report", expenseReportLines(records));
+                const result = await downloadBlob(
+                    blob,
+                    `USLOOB_Expense_Report_${today()}.pdf`
+                );
+                if (result) toast("Expense report PDF exported.");
+            } catch (err) {
+                alert("Expense PDF export failed: " + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function exportExpenseCSV() {
+            const records = getFilteredExpenses();
+
+            if (!records.length) {
+                alert("There are no expenses to export for the selected filters.");
+                return;
+            }
+
+            showLoading("Preparing expense report CSV...");
+            try {
+                const rows = [
+                    ["ID", "Date", "Category", "Description", "Amount", "Payment Method", "Note"],
+                    ...records.map(e => [
+                        e.id,
+                        e.date,
+                        e.category,
+                        e.description,
+                        e.amount,
+                        e.method,
+                        e.note
+                    ])
+                ];
+
+                const csv = rows.map(row => row.map(csvEscape).join(",")).join("\n");
+                const result = await downloadBlob(
+                    new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }),
+                    `USLOOB_Expense_Report_${today()}.csv`
+                );
+
+                if (result) toast("Expense report CSV exported.");
+            } catch (err) {
+                alert("Expense CSV export failed: " + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function printExpenseReport() {
+            const records = getFilteredExpenses();
+
+            if (!records.length) {
+                alert("There are no expenses to print for the selected filters.");
+                return;
+            }
+
+            const total = records.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+            const rows = records.map(e => `
+                <tr>
+                    <td>${safe(e.date)}</td>
+                    <td>${safe(e.category)}</td>
+                    <td>${safe(e.description)}</td>
+                    <td>${money(e.amount)}</td>
+                    <td>${safe(e.method)}</td>
+                    <td>${safe(e.note || "—")}</td>
+                </tr>
+            `).join("");
+
+            const w = window.open("", "_blank", "width=1200,height=850");
+            if (!w) {
+                alert("Please allow pop-ups for printing the expense report.");
+                return;
+            }
+
+            w.document.write(`<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>USLOOB Expense Report</title>
+<style>
+@page { size: A4 landscape; margin: 14mm; }
+body { font-family: Arial, sans-serif; color:#111827; margin:0; }
+h1 { margin:0 0 5px; font-size:25px; }
+.sub { color:#667085; font-size:12px; margin-bottom:18px; }
+.summary { display:flex; gap:18px; margin-bottom:18px; }
+.box { border:1px solid #d0d5dd; padding:10px 14px; min-width:150px; border-radius:8px; }
+.box small { display:block; color:#667085; font-size:10px; text-transform:uppercase; }
+.box strong { display:block; margin-top:4px; font-size:16px; }
+table { width:100%; border-collapse:collapse; }
+th { background:#050505; color:#fff; text-align:left; font-size:10px; padding:9px; }
+td { border:1px solid #d0d5dd; padding:8px; font-size:10px; vertical-align:top; }
+tfoot td { font-weight:700; background:#f2f4f7; }
+</style>
+</head>
+<body>
+<h1>USLOOB — Expense Report</h1>
+<div class="sub">Generated ${safe(new Date().toLocaleString("en-PK"))}</div>
+<div class="summary">
+    <div class="box"><small>Expenses</small><strong>${records.length}</strong></div>
+    <div class="box"><small>Total Expenses</small><strong>${money(total)}</strong></div>
+</div>
+<table>
+<thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Method</th><th>Note</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot><tr><td colspan="3">TOTAL</td><td>${money(total)}</td><td colspan="2">${records.length} expense(s)</td></tr></tfoot>
+</table>
+<script>window.onload=function(){setTimeout(function(){window.print();},250);};<\/script>
+</body>
+</html>`);
+            w.document.close();
         }
 
         function openCourseModal() { $("courseForm").reset(); $("courseModal").style.display = "flex"; setTimeout(() => $("courseName").focus(), 50) } function closeCourseModal() { $("courseModal").style.display = "none" }
@@ -1830,7 +2406,7 @@
             finally { hideLoading(); }
         }
         function logout() { if (!confirm("Are you sure you want to log out?")) return; window.location.href = "index.html" }
-        function refreshUI() { normalizeDatabase(); updateCards(); updateCourseDatalist(); renderStudents(); renderCourses(); renderHistory() }
+        function refreshUI() { normalizeDatabase(); updateCards(); updateCourseDatalist(); renderStudents(); renderCourses(); renderHistory(); if ($("expenseReportModal")) renderExpenseReport() }
 
         function closeModalOnBackdrop(e) { if (e.target === e.currentTarget) e.currentTarget.style.display = "none" }
 
@@ -1846,6 +2422,7 @@
             $("searchInput").oninput = renderStudents; $("statusFilter").onchange = renderStudents;
             $("openHistoryBtn").onclick = openHistoryModal; $("closeHistoryModalBtn").onclick = closeHistoryModal; $("historySearch").oninput = renderHistory; $("historyDateFilter").onchange = renderHistory; $("historyStudentFilter").onchange = renderHistory;
             $("addPaymentBtn").onclick = () => openPaymentModal(""); $("exportHistoryPdfBtn").onclick = exportHistoryPDF; $("exportHistoryCsvBtn").onclick = exportHistoryCSV; $("closePaymentModalBtn").onclick = closePaymentModal; $("cancelPaymentBtn").onclick = closePaymentModal; $("paymentForm").onsubmit = savePayment;
+            $("openExpenseModalBtn").onclick = openExpenseModal; $("openExpenseSettingsBtn").onclick = openExpenseModal; $("closeExpenseModalBtn").onclick = closeExpenseModal; $("cancelExpenseBtn").onclick = closeExpenseModal; $("expenseForm").onsubmit = saveExpense; $("openExpenseReportBtn").onclick = openExpenseReport; $("openExpenseReportSettingsBtn").onclick = openExpenseReport; $("sidebarExpenseReportBtn").onclick = () => { closeSidebar(); openExpenseReport() }; $("closeExpenseReportBtn").onclick = closeExpenseReport; $("expenseReportAddBtn").onclick = () => { closeExpenseReport(); openExpenseModal() }; $("expenseReportSearch").oninput = renderExpenseReport; $("expenseReportCategory").onchange = renderExpenseReport; $("expenseReportMethod").onchange = renderExpenseReport; $("expenseReportFrom").onchange = renderExpenseReport; $("expenseReportTo").onchange = renderExpenseReport; $("clearExpenseFiltersBtn").onclick = () => { $("expenseReportSearch").value = ""; $("expenseReportCategory").value = ""; $("expenseReportMethod").value = ""; $("expenseReportFrom").value = ""; $("expenseReportTo").value = ""; renderExpenseReport() }; $("exportExpensePdfBtn").onclick = exportExpensePDF; $("exportExpenseCsvBtn").onclick = exportExpenseCSV; $("printExpenseReportBtn").onclick = printExpenseReport;
             $("openExportModalBtn").onclick = () => { $("exportDate").value ||= today(); $("exportMonth").value ||= today().slice(0, 7); $("exportYear").value ||= new Date().getFullYear(); $("exportModal").style.display = "flex" };
             $("closeExportModalBtn").onclick = () => $("exportModal").style.display = "none"; $("cancelExportModalBtn").onclick = () => $("exportModal").style.display = "none";
             $("exportPeriod").onchange = () => { const v = $("exportPeriod").value; $("dateSelectGroup").style.display = v === "daily" ? "flex" : "none"; $("monthSelectGroup").style.display = v === "monthly" ? "flex" : "none"; $("yearSelectGroup").style.display = v === "yearly" ? "flex" : "none" }; $("generateStatementBtn").onclick = generateStatement;
