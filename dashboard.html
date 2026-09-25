@@ -1113,16 +1113,53 @@
 
 
     <style>
-        .password-modal-card { max-width: 520px; }
-        .password-help {
-            margin-bottom: 15px; padding: 11px 13px; border: 1px solid #e5e7eb;
-            border-radius: 9px; background: #f8fafc; color: var(--muted);
-            font-size: 12px; line-height: 1.5;
+        .password-modal-card {
+            max-width: 520px;
         }
-        .password-strength { display:flex; align-items:center; gap:8px; margin-top:2px; font-size:11px; color:var(--muted); }
-        .password-strength-bar { height:5px; flex:1; background:#e5e7eb; border-radius:999px; overflow:hidden; }
-        .password-strength-bar span { display:block; height:100%; width:0; transition:width .2s ease; background:#94a3b8; }
-        .password-error { color:var(--danger); font-size:12px; font-weight:700; min-height:16px; margin-top:4px; }
+
+        .password-help {
+            margin-bottom: 15px;
+            padding: 11px 13px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .password-strength {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .password-strength-bar {
+            height: 5px;
+            flex: 1;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar span {
+            display: block;
+            height: 100%;
+            width: 0;
+            transition: width .2s ease;
+            background: #94a3b8;
+        }
+
+        .password-error {
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 700;
+            min-height: 16px;
+            margin-top: 4px;
+        }
     </style>
 </head>
 
@@ -1181,7 +1218,8 @@
                         <button class="add-btn" id="openAddModalBtn">＋ Add Student</button>
                         <button class="export-btn" id="openExportModalBtn">📊 Export Statement</button>
                         <button class="btn-secondary" id="openHistoryBtn">🧾 Payment History</button>
-                        <button class="btn-danger" id="openExpenseModalBtn">＋ Add Expense</button><button class="btn-secondary" id="openExpenseReportBtn">📋 Expense Report</button>
+                        <button class="btn-danger" id="openExpenseModalBtn">＋ Add Expense</button><button
+                            class="btn-secondary" id="openExpenseReportBtn">📋 Expense Report</button>
                     </div>
                     <div class="search-wrapper"><span>🔍</span><input id="searchInput"
                             placeholder="Search name, father, course, phone..."></div>
@@ -1255,7 +1293,8 @@
                     </div>
                     <div class="setting-card">
                         <h4>Change Administration Password</h4>
-                        <p>Change the login password using the permanent Administration Key. The Administration Key itself is never changed by this action.</p>
+                        <p>Change the login password using the permanent Administration Key. The Administration Key
+                            itself is never changed by this action.</p>
                         <button class="btn-primary" id="changePasswordBtn">🔐 Change Password</button>
                     </div>
                     <div class="setting-card">
@@ -1274,8 +1313,11 @@
                     </div>
                     <div class="setting-card">
                         <h4>Expense Management</h4>
-                        <p>Record institute expenses such as rent, utilities, salaries, supplies and other operating costs.</p>
-                        <button class="btn-danger" id="openExpenseSettingsBtn">＋ Add Expense</button><button class="btn-secondary" id="openExpenseReportSettingsBtn" style="margin-left:8px">📋 View Report</button>
+                        <p>Record institute expenses such as rent, utilities, salaries, supplies and other operating
+                            costs.</p>
+                        <button class="btn-danger" id="openExpenseSettingsBtn">＋ Add Expense</button><button
+                            class="btn-secondary" id="openExpenseReportSettingsBtn" style="margin-left:8px">📋 View
+                            Report</button>
                     </div>
                     <div class="setting-card">
                         <h4>Danger Zone</h4>
@@ -1312,6 +1354,7 @@
                         id="sidebarAddStudentBtn">➕ Add Student</button></nav>
                 <div class="nav-section">System</div>
                 <nav class="side-nav"><button data-page="settingsPage">⚙️ Settings</button></nav>
+                <nav class="side-nav"><button onclick="window.location.href = 'admin.html'">🔗 Developer</button></nav>
             </div>
             <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn">↪ Logout</button></div>
         </aside>
@@ -1468,7 +1511,8 @@
     <div class="modal-overlay" id="expenseModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 id="expenseModalTitle">Add Expense</h3><button class="modal-close" id="closeExpenseModalBtn">✕</button>
+                <h3 id="expenseModalTitle">Add Expense</h3><button class="modal-close"
+                    id="closeExpenseModalBtn">✕</button>
             </div>
             <form id="expenseForm">
                 <div class="modal-body">
@@ -1490,7 +1534,8 @@
                         </div>
                         <div class="form-group">
                             <label>Expense Amount (PKR)</label>
-                            <input type="number" id="expenseAmount" min="1" step="1" required placeholder="Enter amount">
+                            <input type="number" id="expenseAmount" min="1" step="1" required
+                                placeholder="Enter amount">
                         </div>
                         <div class="form-group full">
                             <label>Description</label>
@@ -1530,16 +1575,20 @@
             <div class="modal-header">
                 <div>
                     <h3>Expense Report</h3>
-                    <div class="section-subtitle">Review, filter, print and export all recorded institute expenses.</div>
+                    <div class="section-subtitle">Review, filter, print and export all recorded institute expenses.
+                    </div>
                 </div>
                 <button class="modal-close" id="closeExpenseReportBtn">✕</button>
             </div>
             <div class="modal-body">
                 <div class="expense-summary">
-                    <div class="mini-stat"><small>Filtered Expenses</small><strong id="expenseReportCount">0</strong></div>
-                    <div class="mini-stat"><small>Total Expense</small><strong id="expenseReportTotal">Rs. 0</strong></div>
+                    <div class="mini-stat"><small>Filtered Expenses</small><strong id="expenseReportCount">0</strong>
+                    </div>
+                    <div class="mini-stat"><small>Total Expense</small><strong id="expenseReportTotal">Rs. 0</strong>
+                    </div>
                     <div class="mini-stat"><small>Today</small><strong id="expenseReportToday">Rs. 0</strong></div>
-                    <div class="mini-stat"><small>Average Expense</small><strong id="expenseReportAverage">Rs. 0</strong></div>
+                    <div class="mini-stat"><small>Average Expense</small><strong id="expenseReportAverage">Rs.
+                            0</strong></div>
                 </div>
 
                 <div class="expense-toolbar">
@@ -1647,17 +1696,21 @@
             <form id="passwordForm">
                 <div class="modal-body">
                     <div class="password-help">
-                        Enter the permanent Administration Key stored in the online database, then choose a new login password.
-                        The key is used only for privileged administration actions and is never displayed or downloaded by the application.
+                        Enter the permanent Administration Key stored in the online database, then choose a new login
+                        password.
+                        The key is used only for privileged administration actions and is never displayed or downloaded
+                        by the application.
                     </div>
                     <div class="form-grid">
                         <div class="form-group full">
                             <label>Administration Key</label>
-                            <input type="password" id="pkey" autocomplete="off" required placeholder="Enter Administration Key">
+                            <input type="password" id="pkey" autocomplete="off" required
+                                placeholder="Enter Administration Key">
                         </div>
                         <div class="form-group">
                             <label>New Password</label>
-                            <input type="password" id="pnewp" autocomplete="new-password" minlength="8" required placeholder="Minimum 8 characters">
+                            <input type="password" id="pnewp" autocomplete="new-password" minlength="8" required
+                                placeholder="Minimum 8 characters">
                             <div class="password-strength">
                                 <div class="password-strength-bar"><span id="passwordStrengthBar"></span></div>
                                 <span id="passwordStrengthText">Enter a password</span>
@@ -1665,7 +1718,8 @@
                         </div>
                         <div class="form-group">
                             <label>Confirm New Password</label>
-                            <input type="password" id="pconp" autocomplete="new-password" minlength="8" required placeholder="Repeat new password">
+                            <input type="password" id="pconp" autocomplete="new-password" minlength="8" required
+                                placeholder="Repeat new password">
                         </div>
                     </div>
                     <div class="password-error" id="passwordError"></div>
@@ -1756,7 +1810,7 @@
         async function readJsonResponse(response) {
             const text = await response.text();
             let result = null;
-            try { result = text ? JSON.parse(text) : null; } catch (_) {}
+            try { result = text ? JSON.parse(text) : null; } catch (_) { }
             return { result, text };
         }
 
@@ -2376,8 +2430,8 @@ tfoot td { font-weight:700; background:#f2f4f7; }
             showLoading("Updating administration password...");
             try {
                 const response = await fetch(CHANGE_PASSWORD_URL, {
-                    method: "POST", headers: {"Content-Type":"application/json","Accept":"application/json"},
-                    body: JSON.stringify({key: authKey, new_password: newPassword})
+                    method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({ key: authKey, new_password: newPassword })
                 });
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok || result.status !== true) throw new Error(result.message || `Server returned HTTP ${response.status}.`);
@@ -2394,8 +2448,8 @@ tfoot td { font-weight:700; background:#f2f4f7; }
             showLoading("Authorizing and resetting online database...");
             try {
                 const response = await fetch(RESET_URL, {
-                    method: "POST", headers: {"Content-Type":"application/json","Accept":"application/json"},
-                    body: JSON.stringify({key: authKey.trim()})
+                    method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({ key: authKey.trim() })
                 });
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok || result.status !== true) throw new Error(result.message || `Server returned HTTP ${response.status}.`);
