@@ -146,9 +146,10 @@
             gap: 18px
         }
 
+        /* ---------- KPI CARDS : fluid, keeps every card visible on any desktop ---------- */
         .cards {
             display: grid;
-            grid-template-columns: repeat(8, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 13px;
             flex: none
         }
@@ -159,7 +160,8 @@
             border-top: 4px solid var(--primary);
             border-radius: 12px;
             padding: 14px 15px;
-            box-shadow: var(--shadow-sm)
+            box-shadow: var(--shadow-sm);
+            min-width: 0
         }
 
         .card-item h3 {
@@ -191,7 +193,8 @@
             display: flex;
             gap: 9px;
             align-items: center;
-            flex-wrap: wrap
+            flex-wrap: wrap;
+            min-width: 0
         }
 
         .add-btn,
@@ -207,7 +210,8 @@
             font-size: 13px;
             display: inline-flex;
             align-items: center;
-            gap: 7px
+            gap: 7px;
+            white-space: nowrap
         }
 
         .add-btn,
@@ -252,9 +256,9 @@
 
         .search-wrapper {
             height: 41px;
-            min-width: 260px;
+            min-width: 200px;
             max-width: 430px;
-            flex: 1;
+            flex: 1 1 240px;
             display: flex;
             align-items: center;
             gap: 7px;
@@ -313,7 +317,8 @@
         .table-responsive {
             width: 100%;
             height: 100%;
-            overflow: auto
+            overflow: auto;
+            -webkit-overflow-scrolling: touch
         }
 
         table {
@@ -380,7 +385,8 @@
             display: flex;
             gap: 6px;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            flex-wrap: nowrap
         }
 
         .action-icon-btn {
@@ -392,7 +398,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px
+            font-size: 14px;
+            flex: 0 0 auto
         }
 
         .action-icon-btn:hover {
@@ -428,19 +435,22 @@
             align-items: center;
             justify-content: center;
             padding: 18px;
-            backdrop-filter: blur(3px)
+            backdrop-filter: blur(3px);
+            overflow: auto
         }
 
         .modal-card {
             width: 100%;
             max-width: 720px;
             max-height: 92vh;
+            max-height: 92dvh;
             background: var(--card);
             border-radius: 14px;
             box-shadow: var(--shadow-lg);
             overflow: hidden;
             display: flex;
-            flex-direction: column
+            flex-direction: column;
+            min-height: 0
         }
 
         .modal-card.wide {
@@ -453,7 +463,9 @@
             padding: 15px 19px;
             display: flex;
             align-items: center;
-            justify-content: space-between
+            justify-content: space-between;
+            gap: 12px;
+            flex: 0 0 auto
         }
 
         .modal-header h3 {
@@ -464,21 +476,36 @@
             background: transparent;
             border: 0;
             color: #fff;
-            font-size: 20px
+            font-size: 20px;
+            flex: 0 0 auto;
+            line-height: 1
         }
 
         .modal-body {
             padding: 19px;
-            overflow: auto
+            overflow: auto;
+            min-height: 0;
+            flex: 1 1 auto;
+            -webkit-overflow-scrolling: touch
         }
 
+        /* Footer buttons always visible / always reachable */
         .modal-footer {
             padding: 14px 19px;
             border-top: 1px solid var(--border);
             background: #f8fafc;
             display: flex;
             justify-content: flex-end;
-            gap: 9px
+            align-items: center;
+            gap: 9px;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch
+        }
+
+        .modal-footer > button {
+            flex: 0 0 auto
         }
 
         .form-grid {
@@ -490,7 +517,8 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px
+            gap: 6px;
+            min-width: 0
         }
 
         .form-group.full {
@@ -511,7 +539,7 @@
 
         .history-summary {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
             margin-bottom: 14px
         }
@@ -520,7 +548,8 @@
             padding: 12px;
             border: 1px solid var(--border);
             border-radius: 10px;
-            background: #f8fafc
+            background: #f8fafc;
+            min-width: 0
         }
 
         .mini-stat small {
@@ -534,7 +563,9 @@
         .mini-stat strong {
             display: block;
             margin-top: 4px;
-            font-size: 17px
+            font-size: 17px;
+            overflow: hidden;
+            text-overflow: ellipsis
         }
 
         .history-toolbar {
@@ -549,10 +580,9 @@
             height: 39px
         }
 
-
         .expense-summary {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
             margin-bottom: 14px
         }
@@ -690,7 +720,8 @@
 
         .sidebar-scroll {
             flex: 1;
-            overflow: auto
+            overflow: auto;
+            -webkit-overflow-scrolling: touch
         }
 
         .sidebar-footer {
@@ -729,7 +760,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 12px;
-            overflow: auto
+            overflow: auto;
+            -webkit-overflow-scrolling: touch
         }
 
         .course-card {
@@ -742,7 +774,8 @@
 
         .course-card h4 {
             font-size: 14px;
-            margin-bottom: 8px
+            margin-bottom: 8px;
+            word-break: break-word
         }
 
         .course-card p {
@@ -760,15 +793,19 @@
 
         .settings-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 4px
         }
 
         .setting-card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 18px
+            padding: 18px;
+            min-width: 0
         }
 
         .setting-card h4 {
@@ -793,7 +830,8 @@
             border-radius: 9px;
             box-shadow: var(--shadow-lg);
             font-size: 12px;
-            display: none
+            display: none;
+            max-width: calc(100vw - 36px)
         }
 
         #exportCanvas {
@@ -807,7 +845,8 @@
         .voucher-preview-wrap {
             background: #eef2f7;
             padding: 20px;
-            overflow: auto
+            overflow: auto;
+            -webkit-overflow-scrolling: touch
         }
 
         .voucher-sheet {
@@ -965,6 +1004,7 @@
 
         .loading-box {
             min-width: 220px;
+            max-width: calc(100vw - 32px);
             padding: 24px 28px;
             border-radius: 14px;
             background: #fff;
@@ -1022,15 +1062,118 @@
             }
         }
 
-        @media(max-width:1100px) {
+        /* ============================================================
+           RESPONSIVE LAYOUT  (desktop-first, all screen sizes)
+           - Nothing is removed, everything stays reachable
+           - Small screens get scrollable button groups / modal footers
+           ============================================================ */
+
+        /* --- Medium desktop / small laptop (≤1280px) --- */
+        @media (max-width:1280px) {
+            main {
+                padding: 16px;
+                gap: 14px
+            }
+
             .cards {
-                grid-template-columns: repeat(4, 1fr)
+                gap: 11px
+            }
+
+            .card-item {
+                padding: 12px 13px
+            }
+
+            .card-item h3 {
+                font-size: 18px
+            }
+
+            .toolbar-container {
+                gap: 8px
+            }
+
+            .search-wrapper {
+                max-width: none
+            }
+
+            .settings-grid {
+                grid-template-columns: repeat(auto-fit, minmax(290px, 1fr))
             }
         }
 
-        @media(max-width:700px) {
+        /* --- Small desktop / tablet landscape (≤1100px) --- */
+        @media (max-width:1100px) {
+            .cards {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))
+            }
+
+            .card-item h3 {
+                font-size: 17px
+            }
+
+            .action-group-left {
+                flex: 1 1 100%
+            }
+
+            .search-wrapper {
+                flex: 1 1 220px;
+                min-width: 0
+            }
+
+            .history-summary,
+            .expense-summary {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr))
+            }
+
+            .voucher-head {
+                padding: 18px 20px
+            }
+
+            .voucher-body {
+                padding: 20px 20px 22px
+            }
+        }
+
+        /* --- Short viewports and narrow windows: let the page scroll --- */
+        @media (max-width:900px),
+        (max-height:640px) {
+            body {
+                overflow: auto
+            }
+
+            .root {
+                height: auto;
+                min-height: 100%
+            }
+
+            main {
+                overflow: visible
+            }
+
+            .page {
+                height: auto
+            }
+
+            .main-table {
+                flex: 0 0 auto;
+                height: 62vh;
+                min-height: 280px
+            }
+
+            .settings-grid,
+            .course-grid {
+                overflow: visible
+            }
+        }
+
+        /* --- Tablets / large phones (≤768px) --- */
+        @media (max-width:768px) {
             header {
                 padding: 0 13px
+            }
+
+            .header-logo {
+                height: 34px;
+                max-width: 110px
             }
 
             .header-brand h3 {
@@ -1046,7 +1189,8 @@
             }
 
             .cards {
-                grid-template-columns: repeat(2, 1fr)
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 10px
             }
 
             .form-grid,
@@ -1054,7 +1198,8 @@
                 grid-template-columns: 1fr
             }
 
-            .history-summary {
+            .history-summary,
+            .expense-summary {
                 grid-template-columns: repeat(2, 1fr)
             }
 
@@ -1107,6 +1252,97 @@
 
             .signature {
                 width: 45%
+            }
+        }
+
+        /* --- Small / narrow windows (≤620px): scrollable button groups --- */
+        @media (max-width:620px) {
+            .toolbar-container {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            /* Action buttons stay on one line and scroll horizontally,
+               so no button is ever hidden or cut off. */
+            .action-group-left {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding-bottom: 6px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin
+            }
+
+            .action-group-left > button {
+                flex: 0 0 auto
+            }
+
+            .search-wrapper,
+            .filter-select {
+                width: 100%;
+                max-width: none;
+                min-width: 0
+            }
+
+            .history-toolbar > *,
+            .expense-toolbar > * {
+                flex: 1 1 100%;
+                min-width: 0
+            }
+
+            .expense-report-actions > button {
+                flex: 1 1 auto;
+                justify-content: center
+            }
+
+            /* Modal footer buttons stack full width so "Save Student",
+               "Cancel", "Update Password" etc. are always visible. */
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch
+            }
+
+            .modal-footer > button {
+                width: 100%;
+                justify-content: center
+            }
+
+            .modal-overlay {
+                padding: 10px
+            }
+
+            .modal-card {
+                max-height: 94dvh
+            }
+
+            .voucher-preview-wrap {
+                padding: 12px
+            }
+
+            .toast {
+                left: 12px;
+                right: 12px;
+                bottom: 46px;
+                text-align: center
+            }
+        }
+
+        /* --- Very small heights: keep modal usable --- */
+        @media (max-height:520px) {
+            .modal-card {
+                max-height: 96dvh
+            }
+
+            .modal-header {
+                padding: 10px 14px
+            }
+
+            .modal-body {
+                padding: 12px
+            }
+
+            .modal-footer {
+                padding: 10px 14px
             }
         }
     </style>
@@ -1320,6 +1556,11 @@
                             Report</button>
                     </div>
                     <div class="setting-card">
+                        <h4>Developer Profile</h4>
+                        <p>Open the developer profile page (Friday Software Technology) in this same window.</p>
+                        <button class="btn-primary" id="developerSettingsBtn">🧑‍💻 Open Developer Profile</button>
+                    </div>
+                    <div class="setting-card">
                         <h4>Danger Zone</h4>
                         <p>Replace the online database with an empty USLOOB database. This cannot be undone unless you
                             have a backup.</p><button class="btn-danger" id="resetDbBtn">Reset Online Database</button>
@@ -1354,7 +1595,7 @@
                         id="sidebarAddStudentBtn">➕ Add Student</button></nav>
                 <div class="nav-section">System</div>
                 <nav class="side-nav"><button data-page="settingsPage">⚙️ Settings</button></nav>
-                <nav class="side-nav"><button onclick="window.location.href = 'admin.html'">🔗 Developer</button></nav>
+                <nav class="side-nav"><button id="developerBtn">🧑‍💻 Developer</button></nav>
             </div>
             <div class="sidebar-footer"><button class="logout-btn" id="logoutBtn">↪ Logout</button></div>
         </aside>
@@ -1745,6 +1986,9 @@
         const API_BASE = window.USLOOB_API_BASE || "https://fridaysoftwaretechnology.pythonanywhere.com";
         const READ_URL = API_BASE + "/usloob/read";
         const SAVE_URL = API_BASE + "/usloob/save";
+
+        /* Developer profile (opened in the same window) */
+        const DEVELOPER_URL = "https://fridaysoftwaretechnology.github.io/admin/";
 
         const DEFAULT_DB = { auth: { username: "admin", password: "password" }, theme: "#050505", students: [], courses: [], payments: [], history: [], expenses: [] };
         let database = structuredClone(DEFAULT_DB);
@@ -2464,6 +2708,9 @@ tfoot td { font-weight:700; background:#f2f4f7; }
 
         function closeModalOnBackdrop(e) { if (e.target === e.currentTarget) e.currentTarget.style.display = "none" }
 
+        /* Opens the developer profile in the SAME window */
+        function openDeveloperProfile() { window.location.href = DEVELOPER_URL; }
+
         document.addEventListener("DOMContentLoaded", async () => {
             startClock();
             $("openSidebarBtn").onclick = openSidebar; $("closeSidebarBtn").onclick = closeSidebar;
@@ -2488,6 +2735,11 @@ tfoot td { font-weight:700; background:#f2f4f7; }
             $("exportPaymentsCsvBtn").onclick = async () => { showLoading("Preparing payments CSV..."); try { await exportPaymentsCSV() } catch (e) { alert(e.message) } finally { hideLoading() } };
             $("exportJsonBtn").onclick = async () => { showLoading("Preparing JSON export..."); try { await exportJSON() } catch (e) { alert(e.message) } finally { hideLoading() } };
             $("changePasswordBtn").onclick = openPasswordModal; $("closePasswordModalBtn").onclick = closePasswordModal; $("cancelPasswordBtn").onclick = closePasswordModal; $("passwordForm").onsubmit = changePassword; $("pnewp").oninput = updatePasswordStrength; $("resetDbBtn").onclick = resetOnlineDatabase; $("logoutBtn").onclick = logout;
+
+            /* Developer profile shortcuts (sidebar + settings card) */
+            if ($("developerBtn")) $("developerBtn").onclick = () => { closeSidebar(); openDeveloperProfile(); };
+            if ($("developerSettingsBtn")) $("developerSettingsBtn").onclick = openDeveloperProfile;
+
             document.querySelectorAll(".modal-overlay").forEach(m => m.addEventListener("click", closeModalOnBackdrop));
             document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal-overlay").forEach(m => m.style.display = "none") });
             showLoading("Connecting to USLOOB online database...");
