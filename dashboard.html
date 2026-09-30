@@ -1440,6 +1440,192 @@
                 padding: 10px 14px
             }
         }
+
+        /* =====================================================================
+           USLOOB — RESPONSIVE HARDENING PATCH
+           Appended last so it wins over the rules above.
+           No HTML / JavaScript / backend logic is changed.
+           ===================================================================== */
+
+        /* ---------------------------------------------------------------
+           1) The content area scrolls vertically whenever the page does
+              not fit (short screens, browser zoom, wrapped toolbars).
+           --------------------------------------------------------------- */
+        main {
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .page {
+            height: 100%;
+            min-height: 0;
+        }
+
+        /* The data table keeps a usable height instead of collapsing;
+           the page scrolls when there is not enough room. */
+        .main-table {
+            flex: 1 1 auto;
+            min-height: 300px;
+        }
+
+        /* ---------------------------------------------------------------
+           2) MODALS — the inner <form> is now a flex column, so:
+                header = fixed
+                body   = scrolls internally
+                footer = ALWAYS fully visible (Save Student / Cancel /
+                         Update Password / Save Expense ...)
+              This is what makes the "Save Student" button reachable on
+              every screen size, every zoom level and every OS.
+           --------------------------------------------------------------- */
+        .modal-card>form {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .modal-card {
+            max-height: 92vh;
+            max-height: 92dvh;
+        }
+
+        .modal-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-footer {
+            position: relative;
+            z-index: 2;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .modal-footer>button {
+            flex: 0 1 auto;
+            max-width: 100%;
+        }
+
+        /* Voucher preview scrolls internally instead of pushing the
+           footer (and its Export button) off-screen. */
+        .voucher-preview-wrap {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        /* ---------------------------------------------------------------
+           3) TABLE ACTION COLUMN — pinned to the right edge of every
+              table (students, payment history, expense report) so the
+              row action buttons stay visible even while the table
+              scrolls sideways.
+           --------------------------------------------------------------- */
+        .main-table table th:last-child,
+        .main-table table td:last-child:not(.empty) {
+            position: sticky;
+            right: 0;
+            background: var(--card);
+            background-clip: padding-box;
+        }
+
+        .main-table table thead th:last-child {
+            background: var(--primary);
+            z-index: 5;
+        }
+
+        .main-table table tbody td:last-child:not(.empty) {
+            z-index: 2;
+        }
+
+        .main-table table tbody tr:hover td:last-child:not(.empty) {
+            background: #f8fafc;
+        }
+
+        /* Divider shadow only while the table can actually scroll */
+        @media (max-width:1100px) {
+
+            .main-table table th:last-child,
+            .main-table table td:last-child:not(.empty) {
+                box-shadow: -6px 0 10px -6px rgba(0, 0, 0, .18);
+            }
+        }
+
+        /* ---------------------------------------------------------------
+           4) SMALL SCREENS — declared last so they win over the rules
+              above and over the original media queries.
+           --------------------------------------------------------------- */
+        @media (max-width:900px),
+        (max-height:660px) {
+            body {
+                overflow: auto;
+            }
+
+            .root {
+                height: auto;
+                min-height: 100%;
+            }
+
+            main {
+                overflow: visible;
+            }
+
+            .page {
+                height: auto;
+            }
+
+            .main-table {
+                flex: 0 0 auto;
+                height: 62vh;
+                min-height: 280px;
+            }
+
+            .settings-grid,
+            .course-grid {
+                overflow: visible;
+            }
+        }
+
+        /* Narrow phones: stack the modal footer buttons full-width so
+           every action button is readable and clickable. */
+        @media (max-width:620px) {
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+                flex-wrap: nowrap;
+            }
+
+            .modal-footer>button {
+                width: 100%;
+                flex: 1 1 auto;
+                justify-content: center;
+                white-space: normal;
+            }
+        }
+
+        /* Extremely short viewports: never let the modal exceed the
+           viewport; the body scrolls and the footer stays visible. */
+        @media (max-height:520px) {
+            .modal-card {
+                max-height: 96dvh;
+            }
+
+            .modal-header {
+                padding: 10px 14px;
+            }
+
+            .modal-body {
+                padding: 12px;
+            }
+
+            .modal-footer {
+                padding: 10px 14px;
+            }
+        }
     </style>
 
 
