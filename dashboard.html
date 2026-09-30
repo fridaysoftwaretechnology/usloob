@@ -210,8 +210,11 @@
             font-size: 13px;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 7px;
-            white-space: nowrap
+            white-space: nowrap;
+            min-width: 0;
+            line-height: 1.25
         }
 
         .add-btn,
@@ -290,7 +293,13 @@
             color: var(--text);
             outline: 0;
             padding: 0 11px;
-            font-size: 13px
+            font-size: 13px;
+            min-width: 0;
+            width: 100%
+        }
+
+        .filter-select {
+            width: auto
         }
 
         .filter-select:focus,
@@ -481,6 +490,8 @@
             line-height: 1
         }
 
+        /* Form / content body scrolls independently so that the header and the
+           footer (with every button) are ALWAYS fully visible. */
         .modal-body {
             padding: 19px;
             overflow: auto;
@@ -489,7 +500,8 @@
             -webkit-overflow-scrolling: touch
         }
 
-        /* Footer buttons always visible / always reachable */
+        /* Footer buttons always visible / always reachable.
+           Buttons wrap onto new lines instead of scrolling off-screen. */
         .modal-footer {
             padding: 14px 19px;
             border-top: 1px solid var(--border);
@@ -500,12 +512,12 @@
             gap: 9px;
             flex: 0 0 auto;
             flex-wrap: wrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch
+            overflow: visible
         }
 
         .modal-footer > button {
-            flex: 0 0 auto
+            flex: 0 1 auto;
+            min-width: 0
         }
 
         .form-grid {
@@ -577,7 +589,13 @@
 
         .history-toolbar input,
         .history-toolbar select {
-            height: 39px
+            height: 39px;
+            flex: 1 1 180px;
+            width: auto
+        }
+
+        .history-toolbar button {
+            flex: 0 1 auto
         }
 
         .expense-summary {
@@ -597,7 +615,19 @@
         .expense-toolbar input,
         .expense-toolbar select {
             height: 39px;
-            min-width: 145px
+            min-width: 145px;
+            flex: 1 1 160px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--card);
+            color: var(--text);
+            outline: 0;
+            padding: 0 11px;
+            font-size: 13px
+        }
+
+        .expense-toolbar button {
+            flex: 0 1 auto
         }
 
         .expense-report-actions {
@@ -605,6 +635,11 @@
             gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 12px
+        }
+
+        .expense-report-actions > button {
+            flex: 0 1 auto;
+            min-width: 0
         }
 
         .expense-report-total {
@@ -1064,8 +1099,11 @@
 
         /* ============================================================
            RESPONSIVE LAYOUT  (desktop-first, all screen sizes)
-           - Nothing is removed, everything stays reachable
-           - Small screens get scrollable button groups / modal footers
+           Golden rule: NO control is ever clipped or pushed off-screen.
+           - Button groups WRAP (never horizontal-scroll away)
+           - Modal bodies scroll internally; modal footers stay pinned
+           - Wide tables scroll horizontally, but the Actions column
+             stays pinned to the right edge so its buttons stay visible
            ============================================================ */
 
         /* --- Medium desktop / small laptop (≤1280px) --- */
@@ -1130,6 +1168,29 @@
 
             .voucher-body {
                 padding: 20px 20px 22px
+            }
+
+            /* Keep the table's Actions column pinned so its buttons
+               remain visible while the rest of the table scrolls. */
+            .main-table table th:last-child,
+            .main-table table td:last-child:not(.empty) {
+                position: sticky;
+                right: 0;
+                background: var(--card);
+                box-shadow: -6px 0 10px -6px rgba(0, 0, 0, .18)
+            }
+
+            .main-table table thead th:last-child {
+                background: var(--primary);
+                z-index: 5
+            }
+
+            .main-table table tbody td:last-child:not(.empty) {
+                z-index: 2
+            }
+
+            .main-table table tbody tr:hover td:last-child:not(.empty) {
+                background: #f8fafc
             }
         }
 
@@ -1255,56 +1316,72 @@
             }
         }
 
-        /* --- Small / narrow windows (≤620px): scrollable button groups --- */
+        /* --- Small / narrow windows (≤620px) --- */
         @media (max-width:620px) {
+
+            /* Toolbar collapses to full-width stacked controls */
             .toolbar-container {
                 flex-direction: column;
-                align-items: stretch
+                align-items: stretch;
+                gap: 9px
             }
 
-            /* Action buttons stay on one line and scroll horizontally,
-               so no button is ever hidden or cut off. */
+            /* Every action button is laid out on a wrapping grid so that
+               ALL of them remain on screen – nothing scrolls out of view. */
             .action-group-left {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                overflow-y: hidden;
-                padding-bottom: 6px;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: thin
+                flex-wrap: wrap;
+                overflow: visible;
+                padding-bottom: 0;
+                gap: 8px
             }
 
             .action-group-left > button {
-                flex: 0 0 auto
+                flex: 1 1 46%;
+                min-width: 0;
+                justify-content: center;
+                text-align: center;
+                white-space: normal;
+                word-break: break-word
             }
 
             .search-wrapper,
             .filter-select {
                 width: 100%;
                 max-width: none;
-                min-width: 0
+                min-width: 0;
+                flex: 1 1 100%
             }
 
+            /* Toolbars inside modals: one control per row, all visible */
             .history-toolbar > *,
             .expense-toolbar > * {
                 flex: 1 1 100%;
                 min-width: 0
             }
 
+            .expense-report-actions {
+                gap: 8px
+            }
+
             .expense-report-actions > button {
-                flex: 1 1 auto;
-                justify-content: center
+                flex: 1 1 46%;
+                justify-content: center;
+                white-space: normal;
+                text-align: center
             }
 
             /* Modal footer buttons stack full width so "Save Student",
-               "Cancel", "Update Password" etc. are always visible. */
+               "Cancel", "Update Password" etc. are always fully visible. */
             .modal-footer {
                 flex-direction: column;
-                align-items: stretch
+                align-items: stretch;
+                flex-wrap: nowrap
             }
 
             .modal-footer > button {
                 width: 100%;
-                justify-content: center
+                justify-content: center;
+                white-space: normal
             }
 
             .modal-overlay {
@@ -1324,6 +1401,24 @@
                 right: 12px;
                 bottom: 46px;
                 text-align: center
+            }
+        }
+
+        /* --- Very narrow phones (≤400px): one button per row --- */
+        @media (max-width:400px) {
+
+            .action-group-left > button,
+            .expense-report-actions > button {
+                flex: 1 1 100%
+            }
+
+            .cards {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr))
+            }
+
+            .history-summary,
+            .expense-summary {
+                grid-template-columns: 1fr
             }
         }
 
